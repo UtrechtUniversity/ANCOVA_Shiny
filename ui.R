@@ -7,20 +7,23 @@ require("shiny")
 # install.packages("shinydashboard")
 library("shinydashboard")
 
-uu_color
+uu_color <- " #ffcd00"
+
 
 ##################################################################
 
 
 ui <- dashboardPage(skin = "black",
 
-                    dashboardHeader(title = "add app title",titleWidth = 350),
+                    dashboardHeader(title = "ANCOVA", titleWidth = 350),
                     dashboardSidebar(width = 350,
                                      sidebarMenu(menuItem("", tabName = "home", icon = icon("home")),
                                                  menuItem("add 1st tab name", tabName = "tab1"),
                                                  menuItem("add 2nd tab name", tabName = "tab2"),
                                                  menuItem("add 3rd tab name", tabName = "tab3"),
-                                                 menuItem("Disclaimer", tabName = "Disclaimer"), HTML("<br><br><br><br><br><br><br><br><br><br><br><br><br><br>"), img(src='cm_hs_uu-logoengels_diapositief_rgb.png', align = "left")
+                                                 menuItem("Disclaimer", tabName = "Disclaimer"),
+                                                 HTML("<br><br><br><br><br><br><br><br><br><br><br><br><br><br>"),
+                                                 img(src = 'logo.png', align = "left")
 
                                                   ### you can easily add extra tabs by including an extra "menuItem("...", tabName = "")," before the disclaimer ###
                                                   ### you can remove or add <br> statements in the HTML function (menuItem("Disclaimer")) to adjust the position of the UU logo (make sure it is approximately at the bottom of the screen when opened)
@@ -32,58 +35,59 @@ ui <- dashboardPage(skin = "black",
                     dashboardBody(
 
                       # CSS styles
-                      tags$style(HTML(".irs-bar {background: #ffcd00}")),
-                      tags$style(HTML(".irs-bar {border-top: 1px solid black}")),
-                      tags$style(HTML(".irs-bar-edge {background: #ffcd00}")),
-                      tags$style(HTML(".irs-bar-edge {border: 1px solid black}")),
-                      tags$style(HTML(".irs-single {background: #ffcd00}")),
-                      tags$style(HTML(".selectize-input {border-color: #ffcd00}")),
-                      tags$style(HTML(".selectize-dropdown {border-color: #ffcd00}")),
+                      tags$style(HTML(paste0(".irs-bar {background:",  uu_color, "}"))),
+                      tags$style(HTML(paste0(".irs-bar {border-top: 1px solid black}"))),
+                      tags$style(HTML(paste0(".irs-bar-edge {background:",  uu_color, "}"))),
+                      tags$style(HTML(paste0(".irs-bar-edge {border: 1px solid black}"))),
+                      tags$style(HTML(paste0(".irs-single {background:",  uu_color, "}"))),
+                      tags$style(HTML(paste0(".selectize-input {border-color:",  uu_color, "}"))),
+                      tags$style(HTML(paste0(".selectize-dropdown {border-color:",  uu_color, "}"))),
 
-                      ### note that #ffcd00 is the mustard yellow color used in the sidebar. ###
+                      ### note that uu_color is the mustard yellow color used in the sidebar. ###
                       ### If possible, you can use this color + different shades of grey (+ black & white) in your figures. ###
 
-                      tags$head(tags$style(HTML('.skin-black .main-header .logo {
-                                                background-color: #ffcd00;
-                                                }
-                                                .skin-black .main-header .logo:hover {
-                                                background-color: #ffcd00;
-                                                }
+                      tags$head(tags$style(HTML(
+                        paste0('.skin-black .main-header .logo {
+                               background-color:',  uu_color, ';
+                               }
+                               .skin-black .main-header .logo:hover {
+                               background-color:',  uu_color, ';
+                               }
 
-                                                /* active selected tab in the sidebarmenu */
-                                                .skin-black .main-sidebar .sidebar .sidebar-menu .active a{
-                                                background-color: #ffcd00;
-                                                }
+                               /* active selected tab in the sidebarmenu */
+                               .skin-black .main-sidebar .sidebar .sidebar-menu .active a{
+                               background-color:',  uu_color, ';
+                               }
 
-                                                /* navbar (rest of the header) */
-                                                .skin-black .main-header .navbar {
-                                                background-color: #ffcd00;
-                                                }
+                               /* navbar (rest of the header) */
+                               .skin-black .main-header .navbar {
+                               background-color:',  uu_color, ';
+                               }
 
-                                                /* toggle button when hovered  */
-                                                .skin-black .main-header .navbar .sidebar-toggle:hover{
-                                                background-color: #ffcd00;
-                                                }
+                               /* toggle button when hovered  */
+                               .skin-black .main-header .navbar .sidebar-toggle:hover{
+                               background-color:',  uu_color, ';
+                               }
 
-                                                /* other links in the sidebarmenu when hovered */
-                                                .skin-black .main-sidebar .sidebar .sidebar-menu a:hover{
-                                                background-color: #ffcd00;
-                                                }
-                                                /* other links in the sidebarmenu */
-                                                .skin-black .main-sidebar .sidebar .sidebar-menu a{
-                                                background-color: #ffcd00;
-                                                color: #000000;
-                                                }
+                               /* other links in the sidebarmenu when hovered */
+                               .skin-black .main-sidebar .sidebar .sidebar-menu a:hover{
+                               background-color:',  uu_color, ';
+                               }
+                               /* other links in the sidebarmenu */
+                               .skin-black .main-sidebar .sidebar .sidebar-menu a{
+                               background-color:',  uu_color, ';
+                               color: #000000;
+                               }
 
-                                                /* active selected tab in the sidebarmenu */
-                                                .skin-black .main-sidebar .sidebar .sidebar-menu .active a{
-                                                background-color: #000000;
-                                                color: #FFFFFF;
-                                                }
+                               /* active selected tab in the sidebarmenu */
+                               .skin-black .main-sidebar .sidebar .sidebar-menu .active a{
+                               background-color: #000000;
+                               color: #FFFFFF;
+                               }
 
-                                                .skin-black .main-sidebar {color: #000000; background-color: #ffcd00;}
+                               .skin-black .main-sidebar {color: #000000; background-color:',  uu_color, ';}
 
-                                                '))),
+                               ')))),
                       tabItems(
 
                           tabItem(tabName = "Disclaimer", box(width = 12,h5("Terms of Usage Utrecht Unversity Shiny Server", br(), br(), tags$ul(
