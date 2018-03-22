@@ -60,8 +60,10 @@ server <- function(input, output, session) {
 
   makeReactiveBinding("outputText")
 
+  outputText <- "Nothing yet."
+
   observeEvent(input$drop_result, {
-    outputText <<- paste(str(input$drop_result))
+    outputText <<- paste(round(input$drop_result,2))
   })
 
   output$text <- renderText({
