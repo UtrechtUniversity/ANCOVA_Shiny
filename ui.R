@@ -20,7 +20,8 @@ ui <- dashboardPage(
 
   dashboardHeader(title = "ANOVA and ANCOVA demonstrations", titleWidth = 350),
   dashboardSidebar(width = 350,
-                   sidebarMenu(menuItem("", tabName = "home", icon = icon("home")),
+                   sidebarMenu(
+                     # menuItem("", tabName = "home", icon = icon("home")),
                                menuItem("ANOVA", tabName = "tab1"),
                                menuItem("ANCOVA", tabName = "tab2"),
                                # menuItem("add 3rd tab name", tabName = "tab3"),
@@ -97,16 +98,21 @@ ui <- dashboardPage(
       tabItem(tabName = "Disclaimer", box(width = 12,h5("Terms of Usage Utrecht Unversity Shiny Server", br(), br(), tags$ul(
         tags$li("Purpose of the service “utrecht-university.shinyapps.io” is to provide a digital place for trying out, evaluating and/or comparing methods developed by researchers of Utrecht University for the scientific community worldwide. The app and its contents may not be preserved in such a way that it can be cited or can be referenced to. "), tags$li("The web application is provided ‘as is’ and ‘as available’ and is without any warranty. Your use of this web application is solely at your own risk."), tags$li("	You must ensure that you are lawfully entitled and have full authority to upload  data in the web application. The file data must not contain any  data which can raise issues relating to abuse, confidentiality, privacy,  data protection, licensing, and/or intellectual property. You shall not upload data with any confidential or proprietary information that you desire or are required to keep secret. "),tags$li("By using this app you agree to be bound by the above terms."))))),
 
-      tabItem(tabName = "home",
-              box(width = 12, align = "center",h4("Welcome"),
-                  column(12, align = "left",
-                          h5("add app background info")))),
+      # tabItem(tabName = "home",
+      #         box(width = 12, align = "center",h4("Welcome"),
+      #             column(12, align = "left",
+      #                     h5("add app background info")))),
 
       tabItem(tabName = "tab1",
               box(width = 12, align = "center",
-                  h4("ANOVA"),
                   column(12, align = "left",
-                         showOutput("anova_plot", "Highcharts")))),
+                         highchartOutput("anova_plot"))
+              ),
+              box(width = 12, align = "center",
+                  h4("Data"),
+                  textOutput("text"),
+                  tableOutput("dattab")
+              )),
 
 
       tabItem(tabName = "tab2", box(width = 12, align = "center", h4("add title"),column(12,align = "left", h5("add content"))))
