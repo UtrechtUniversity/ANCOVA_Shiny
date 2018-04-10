@@ -5,7 +5,8 @@
 *.rdb
 *.rdx
 *.RData
-*.png
+
+
 Working_Document_July_2017_cache/html/__packages
 Working_Document_Extended_Batschelet_Fall_2017_cache/html/__packages
 *.Rproj
