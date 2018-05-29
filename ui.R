@@ -4,8 +4,7 @@
 library(shiny)
 library(shinydashboard)
 library(highcharter)
-library(rCharts)
-library(knitr)
+# library(rCharts)
 
 
 uu_color <- " #ffcd00"
@@ -124,7 +123,18 @@ ui <- dashboardPage(
               )),
 
 
-      tabItem(tabName = "tab2", box(width = 12, align = "center", h4("add title"),column(12,align = "left", h5("add content"))))
+      tabItem(tabName = "tab2", box(width = 12, align = "center",
+                                    h4(""),
+                                    column(12,align = "left",
+
+                                           h5("Development",
+                                              br(),
+                                              br(),
+                                              tags$ul(
+                                                tags$li("Utrecht University lay-out developed by Kimberley Lek."),
+                                                tags$li("This application is developed by Kees Mulder.")
+                                              ) # end tags$ul
+                                           ))))
 
 
     )
