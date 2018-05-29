@@ -39,7 +39,7 @@ server <- function(input, output, session) {
 
     highchart() %>%
       hc_chart(animation = FALSE) %>%
-      hc_add_theme(hc_theme_sandsignika()) %>%
+      hc_add_theme(hc_theme_google()) %>%
       hc_title(text = "ANOVA") %>%
       hc_tooltip(valueDecimals = 2) %>%
       hc_yAxis(max = max(dat$mu) + diff(range(dat$mu)),
@@ -81,7 +81,7 @@ server <- function(input, output, session) {
 
 
   observeEvent(input$drop_result, {
-    newy <- round(as.numeric(input$drop_result[1]), 1)
+    newy <- round(as.numeric(input$drop_result[1]), 2)
     cond <- input$drop_result[2]
     gend <- ifelse(as.numeric(input$drop_result[3]), "Male", "Female")
     outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
@@ -92,9 +92,7 @@ server <- function(input, output, session) {
 
   })
 
-  output$text <- renderText({
-    outputText
-  })
+  output$text <- renderText({outputText})
 
   output$dattab <- renderTable({changed_dat})
 
@@ -102,10 +100,6 @@ server <- function(input, output, session) {
   output$anova_results <- renderTable({
     as.data.frame(summary(anova_tab)[[1]])
     }, rownames = TRUE)
-
-  output$anova_text <- renderText({
-    capture.output(summary(anova_tab))
-    })
 
 
 }
