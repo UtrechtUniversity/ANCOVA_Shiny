@@ -108,19 +108,24 @@ ui <- dashboardPage(
                   column(12, align = "left",
                          highchartOutput("anova_plot"))
               ),
-              box(width = 12, align = "center",
-                  h4("Data"),
-                  textOutput("text", container = h5),
-                  tableOutput("dattab")
-              ),
-              box(width = 12, align = "center",
+                     box(width = 12, align = "center",
+              column(width = 6,
+                         h4("Data"),
+                         textOutput("text", container = h5),
+                         tableOutput("dattab")
+                     ),
+              column(width = 6,
+              # box(width = 12, align = "center",
                   h4("Anova"),
                   tableOutput("anova_results")
               # ),
               # box(width = 12, align = "center",
               #     h4("Anova (text)"),
               #     verbatimTextOutput("anova_text")
-              )),
+              )
+              )
+              ),
+              # ),
 
 
       tabItem(tabName = "tab2", box(width = 12, align = "center",
