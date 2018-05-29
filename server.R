@@ -4,8 +4,7 @@ server <- function(input, output, session) {
 
   dat <- data.frame(cbind(Condition = rep(c("Treatment", "Control"), 2),
                           Gender = rep(c("Female", "Male"), each = 2)),
-                    cbind(mu = c(1, 2, 1.2, 1.8),
-                          se = c(.5, 2, .3, .6)))
+                    cbind(mu = c(1, 2, 1.2, 1.8)))
   rownames(dat) <- paste0("Group_", 1:nrow(dat))
 
   changed_dat <- dat
@@ -14,13 +13,13 @@ server <- function(input, output, session) {
   #   dat
   # })
 
-  compute_aov <- function() {
-    reactive({aovdat <- rbind(
-      cbind("Treatment", "Female", rnorm(25, mean = changed_dat[1, 3])),
-      cbind("Control", "Female",   rnorm(25, mean = changed_dat[2, 3])),
-      cbind("Treatment", "Male",   rnorm(25, mean = changed_dat[3, 3])),
-      cbind("Control", "Male",     rnorm(25, mean = changed_dat[4, 3]))
-    )})
+  compute_aov <- function(data) {
+    aovdat <- rbind(
+      cbind("Treatment", "Female", rnorm(25, mean = data[1, 3])),
+      cbind("Control", "Female",   rnorm(25, mean = data[2, 3])),
+      cbind("Treatment", "Male",   rnorm(25, mean = data[3, 3])),
+      cbind("Control", "Male",     rnorm(25, mean = data[4, 3]))
+    )
     aovdat <- as.data.frame(aovdat)
     aovdat[, 3] <- as.numeric(aovdat[, 3])
     colnames(aovdat) <- c("Condition", "Gender", "x")
@@ -63,7 +62,6 @@ server <- function(input, output, session) {
         )
       ) -> h1
 
-    if (length(input$new_y) > 0) dat[1,1] <- input$new_y
 
     return(h1)
   })
@@ -75,7 +73,7 @@ server <- function(input, output, session) {
 
   outputText <- "Nothing yet."
 
-  anova_tab <- compute_aov()
+  anova_tab <- compute_aov(dat)
 
 
   observeEvent(input$drop_result, {
@@ -86,6 +84,8 @@ server <- function(input, output, session) {
                          " condition to ", newy, ".")
     changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "mu"] <<- newy
 
+    anova_tab <<- compute_aov(changed_dat)
+
   })
 
   output$text <- renderText({
@@ -95,7 +95,13 @@ server <- function(input, output, session) {
   output$dattab <- renderTable({changed_dat})
 
 
-  output$anova_results <- renderTable({summary(anova_tab)})
+  output$anova_results <- renderTable({
+    as.data.frame(summary(anova_tab)[[1]])
+    }, rownames = TRUE)
+
+  output$anova_text <- renderText({
+    capture.output(summary(anova_tab))
+    })
 
 
 }

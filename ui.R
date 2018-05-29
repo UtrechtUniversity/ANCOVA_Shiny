@@ -111,14 +111,16 @@ ui <- dashboardPage(
               ),
               box(width = 12, align = "center",
                   h4("Data"),
-                  br(),
-                  textOutput("text", container = h3),
-                  br(),
+                  textOutput("text", container = h5),
                   tableOutput("dattab")
               ),
               box(width = 12, align = "center",
                   h4("Anova"),
                   tableOutput("anova_results")
+              # ),
+              # box(width = 12, align = "center",
+              #     h4("Anova (text)"),
+              #     verbatimTextOutput("anova_text")
               )),
 
 
