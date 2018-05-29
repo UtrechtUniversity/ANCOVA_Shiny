@@ -14,6 +14,19 @@ server <- function(input, output, session) {
   #   dat
   # })
 
+  compute_aov <- function() {
+    reactive({aovdat <- rbind(
+      cbind("Treatment", "Female", rnorm(25, mean = changed_dat[1, 3])),
+      cbind("Control", "Female",   rnorm(25, mean = changed_dat[2, 3])),
+      cbind("Treatment", "Male",   rnorm(25, mean = changed_dat[3, 3])),
+      cbind("Control", "Male",     rnorm(25, mean = changed_dat[4, 3]))
+    )})
+    aovdat <- as.data.frame(aovdat)
+    aovdat[, 3] <- as.numeric(aovdat[, 3])
+    colnames(aovdat) <- c("Condition", "Gender", "x")
+    aov(x ~ Condition + Gender, data = aovdat)
+  }
+
 
   output$anova_plot <- renderHighchart({
 
@@ -28,7 +41,7 @@ server <- function(input, output, session) {
       hc_tooltip(valueDecimals = 2) %>%
       hc_yAxis(max = max(dat$mu) + diff(range(dat$mu)),
                min = min(dat$mu) - diff(range(dat$mu))) %>%
-      hc_subtitle(text = "Points here can be dragged.") %>%
+      hc_subtitle(text = "2x2 Anova model") %>%
       hc_xAxis(categories = c("Female", "Male"), title = list(text = "Mean")) %>%
       hc_add_series(name = "Treatment", data = dat[dat$Condition == "Treatment", "mu"],
                     draggableY = TRUE) %>%
@@ -58,16 +71,21 @@ server <- function(input, output, session) {
 
   makeReactiveBinding("outputText")
   makeReactiveBinding("changed_dat")
+  makeReactiveBinding("anova_tab")
 
   outputText <- "Nothing yet."
+
+  anova_tab <- compute_aov()
+
 
   observeEvent(input$drop_result, {
     newy <- round(as.numeric(input$drop_result[1]), 1)
     cond <- input$drop_result[2]
     gend <- ifelse(as.numeric(input$drop_result[3]), "Male", "Female")
-    outputText <<- paste0("You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
+    outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
                          " condition to ", newy, ".")
     changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "mu"] <<- newy
+
   })
 
   output$text <- renderText({
@@ -75,6 +93,10 @@ server <- function(input, output, session) {
   })
 
   output$dattab <- renderTable({changed_dat})
+
+
+  output$anova_results <- renderTable({summary(anova_tab)})
+
 
 }
 
