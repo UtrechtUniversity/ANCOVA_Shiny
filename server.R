@@ -13,12 +13,16 @@ server <- function(input, output, session) {
   #   dat
   # })
 
+  gen_exact_data <- function(n = 25, mean = 0, sd = 1) {
+    as.numeric(sd * (scale(rnorm(n = n)) + mean))
+  }
+
   compute_aov <- function(data) {
     aovdat <- rbind(
-      cbind("Treatment", "Female", rnorm(25, mean = data[1, 3])),
-      cbind("Control", "Female",   rnorm(25, mean = data[2, 3])),
-      cbind("Treatment", "Male",   rnorm(25, mean = data[3, 3])),
-      cbind("Control", "Male",     rnorm(25, mean = data[4, 3]))
+      cbind("Treatment", "Female", gen_exact_data(25, mean = data[1, 3])),
+      cbind("Control", "Female",   gen_exact_data(25, mean = data[2, 3])),
+      cbind("Treatment", "Male",   gen_exact_data(25, mean = data[3, 3])),
+      cbind("Control", "Male",     gen_exact_data(25, mean = data[4, 3]))
     )
     aovdat <- as.data.frame(aovdat)
     aovdat[, 3] <- as.numeric(aovdat[, 3])
@@ -41,7 +45,7 @@ server <- function(input, output, session) {
       hc_yAxis(max = max(dat$mu) + diff(range(dat$mu)),
                min = min(dat$mu) - diff(range(dat$mu))) %>%
       hc_subtitle(text = "2x2 Anova model") %>%
-      hc_xAxis(categories = c("Female", "Male"), title = list(text = "Mean")) %>%
+      hc_xAxis(categories = c("Female", "Male"), title = list(text = "Gender")) %>%
       hc_add_series(name = "Treatment", data = dat[dat$Condition == "Treatment", "mu"],
                     draggableY = TRUE) %>%
       hc_add_series(name = "Control", data = dat[dat$Condition == "Control", "mu"],
@@ -50,7 +54,7 @@ server <- function(input, output, session) {
       hc_plotOptions(
         series = list(
           point = list(
-            events = list(drop = dropFunction)
+            events = list(drag = dropFunction)
           ),
           stickyTracking = FALSE
         ),
