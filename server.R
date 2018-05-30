@@ -4,7 +4,7 @@ server <- function(input, output, session) {
 
   dat <- data.frame(cbind(Condition = rep(c("Treatment", "Control"), 2),
                           Gender = rep(c("Female", "Male"), each = 2)),
-                    cbind(mu = c(1, 2, 1.2, 1.8)))
+                    cbind(mu = c(3, 2, 2, 3)))
   rownames(dat) <- paste0("Group_", 1:nrow(dat))
 
   changed_dat <- dat
@@ -65,8 +65,7 @@ server <- function(input, output, session) {
       hc_add_theme(hc_theme_google()) %>%
       hc_title(text = "ANOVA") %>%
       hc_tooltip(valueDecimals = 2) %>%
-      hc_yAxis(max = max(dat$mu) + diff(range(dat$mu)),
-               min = min(dat$mu) - diff(range(dat$mu))) %>%
+      hc_yAxis(min = 0, max = 5) %>%
       hc_subtitle(text = "2x2 Anova model") %>%
       hc_xAxis(categories = c("Female", "Male"), title = list(text = "Gender")) %>%
       hc_add_series(name = "Treatment", data = dat[dat$Condition == "Treatment", "mu"],
@@ -79,7 +78,9 @@ server <- function(input, output, session) {
           point = list(
             events = list(drag = dropFunction)
           ),
-          dragPrecisionY = .1,
+          dragPrecisionY = .25,
+          dragMinY = 0,
+          dragMaxY = 5,
           stickyTracking = FALSE
         ),
         column = list(
@@ -106,7 +107,7 @@ server <- function(input, output, session) {
 
 
   observeEvent(input$drop_result, {
-    newy <- round(as.numeric(input$drop_result[1]), 2)
+    newy <- round(as.numeric(input$drop_result[1]), 1)
     cond <- input$drop_result[2]
     gend <- ifelse(as.numeric(input$drop_result[3]), "Male", "Female")
     # outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
