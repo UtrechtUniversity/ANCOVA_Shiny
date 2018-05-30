@@ -22,40 +22,40 @@ ui <- dashboardPage(
   dashboardSidebar(width = 350,
                    sidebarMenu(
                      # menuItem("", tabName = "home", icon = icon("home")),
-                               menuItem("ANOVA", tabName = "tab1"),
-                               menuItem("ANCOVA", tabName = "tab2"),
-                               # menuItem("add 3rd tab name", tabName = "tab3"),
-                               menuItem("Disclaimer", tabName = "Disclaimer"),
+                     menuItem("ANOVA", tabName = "tab1"),
+                     menuItem("ANCOVA", tabName = "tab2"),
+                     # menuItem("add 3rd tab name", tabName = "tab3"),
+                     menuItem("Disclaimer", tabName = "Disclaimer"),
 
 
 
-                               div("Shiny app by",
-                                   a(href="https://www.uu.nl/staff/KTMulder/0",
-                                     target = "_blank",
-                                     "Kees Mulder"),align="right", style = "font-size: 10pt"),
+                     div("Shiny app by",
+                         a(href="https://www.uu.nl/staff/KTMulder/0",
+                           target = "_blank",
+                           "Kees Mulder"),align="right", style = "font-size: 10pt"),
 
-                               div("Base R code by",
-                                   a(href="https://www.uu.nl/staff/KTMulder/0",target="_blank",
-                                     "Kees Mulder"),align="right", style = "font-size: 10pt"),
+                     div("Base R code by",
+                         a(href="https://www.uu.nl/staff/KTMulder/0",target="_blank",
+                           "Kees Mulder"),align="right", style = "font-size: 10pt"),
 
-                               div("Base Layout by",
-                                   a(href="https://www.uu.nl/medewerkers/KMLek/0",target="_blank",
-                                     "Kimberley Lek"),align="right", style = "font-size: 10pt"),
+                     div("Base Layout by",
+                         a(href="https://www.uu.nl/medewerkers/KMLek/0",target="_blank",
+                           "Kimberley Lek"),align="right", style = "font-size: 10pt"),
 
-                               div("Shiny source files:",
-                                   a(href="https://github.com/EducationalShinyUU/ANCOVA_Shiny",
-                                     target="_blank","GitHub"),align="right", style = "font-size: 10pt"),
+                     div("Shiny source files:",
+                         a(href="https://github.com/EducationalShinyUU/ANCOVA_Shiny",
+                           target="_blank","GitHub"),align="right", style = "font-size: 10pt"),
 
-                               HTML("<br><br><br><br><br><br><br><br><br><br><br><br><br><br>"),
-                               img(src = 'logo.png', align = "left")
+                     HTML("<br><br><br><br><br><br><br><br><br><br><br><br><br><br>"),
+                     img(src = 'logo.png', align = "left")
 
-                               ### you can easily add extra tabs by including an extra "menuItem("...",
-                               ### tabName = "")," before the disclaimer ### you can remove or add <br>
-                               ### statements in the HTML function (menuItem("Disclaimer")) to adjust the
-                               ### position of the UU logo (make sure it is approximately at the bottom of the
-                               ### screen when opened)
+                     ### you can easily add extra tabs by including an extra "menuItem("...",
+                     ### tabName = "")," before the disclaimer ### you can remove or add <br>
+                     ### statements in the HTML function (menuItem("Disclaimer")) to adjust the
+                     ### position of the UU logo (make sure it is approximately at the bottom of the
+                     ### screen when opened)
                    )
-                         # href="http://www.github.com/keesmulder",
+                   # href="http://www.github.com/keesmulder",
 
   ),
 
@@ -130,39 +130,37 @@ ui <- dashboardPage(
                   column(12, align = "left",
                          highchartOutput("anova_plot"))
               ),
-                     box(width = 12, align = "center",
-              column(width = 6,
+              box(width = 12, align = "center",
+                  column(width = 6,
                          h4("Data"),
                          textOutput("text", container = h5),
                          tableOutput("dattab")
-                     ),
-              column(width = 6,
+                  ),
+                  column(width = 6,
+                         # box(width = 12, align = "center",
+                         h4("Anova"),
+                         uiOutput("anova_results")
+                  )
+              )
+      ),
+
+      tabItem(tabName = "tab2",
+              box(width = 12, align = "center",
+                  column(12, align = "left",
+                         highchartOutput("ancova_plot"))
+              ),
               # box(width = 12, align = "center",
-                  h4("Anova"),
-                  uiOutput("anova_results")
-              # ),
-              # box(width = 12, align = "center",
-              #     h4("Anova (text)"),
-              #     verbatimTextOutput("anova_text")
+              #     column(width = 6,
+              #            h4("Data"),
+              #            textOutput("text", container = h5),
+              #            tableOutput("dattab")
+              #     ),
+                  column(width = 6,
+                         # box(width = 12, align = "center",
+                         h4("Anova"),
+                         uiOutput("ancova_results")
+                  )
               )
-              )
-              )
-              # ),
-
-
-      # tabItem(tabName = "tab2", box(width = 12, align = "center",
-      #                               h4(""),
-      #                               column(12,align = "left",
-      #
-      #                                      h5("Development",
-      #                                         br(),
-      #                                         br(),
-      #                                         tags$ul(
-      #                                           tags$li("Utrecht University lay-out developed by Kimberley Lek."),
-      #                                           tags$li("This application is developed by Kees Mulder.")
-      #                                         ) # end tags$ul
-      #                                      ))))
-
 
     )
   )

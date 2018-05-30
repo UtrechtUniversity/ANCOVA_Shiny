@@ -41,30 +41,6 @@ server <- function(input, output, session) {
 
   changed_dat <- dat
 
-  # Dataset <- reactive({
-  #   dat
-  # })
-
-  # Number per group
-  # n_g <- 25
-
-  # gen_exact_data <- function(n = 25, mean = 0, sd = 1) {
-    # as.numeric(sd * (scale(rnorm(n = n)) + mean))
-  # }
-
-  # compute_aov_old <- function(data) {
-  #   aovdat <- rbind(
-  #     cbind("Treatment", "Female", gen_exact_data(25, mean = data[1, 3])),
-  #     cbind("Control", "Female",   gen_exact_data(25, mean = data[2, 3])),
-  #     cbind("Treatment", "Male",   gen_exact_data(25, mean = data[3, 3])),
-  #     cbind("Control", "Male",     gen_exact_data(25, mean = data[4, 3]))
-  #   )
-  #   aovdat <- as.data.frame(aovdat)
-  #   aovdat[, 3] <- as.numeric(aovdat[, 3])
-  #   colnames(aovdat) <- c("Condition", "Gender", "x")
-  #   aov(x ~ Condition * Gender, data = aovdat)
-  # }
-
   svar <- function(x) mean((x - mean(x))^2)
 
 
