@@ -1,6 +1,38 @@
+library(pander)
+library(markdown)
+library(stringr)
+library(shiny)
 
+# function derived from the highlightHTMLcells() function of the highlightHTML package
+colortable <- function(htmltab, css, style="table-condensed table-bordered"){
+  tmp <- str_split(htmltab, "\n")[[1]]
+  CSSid <- gsub("\\{.+", "", css)
+  CSSid <- gsub("^[\\s+]|\\s+$", "", CSSid)
+  CSSidPaste <- gsub("#", "", CSSid)
+  CSSid2 <- paste(" ", CSSid, sep = "")
+  ids <- paste0("<td id='", CSSidPaste, "'")
+  for (i in 1:length(CSSid)) {
+    locations <- grep(CSSid[i], tmp)
+    tmp[locations] <- gsub("<td", ids[i], tmp[locations])
+    tmp[locations] <- gsub(CSSid2[i], "", tmp[locations],
+                           fixed = TRUE)
+  }
+  htmltab <- paste(tmp, collapse="\n")
+  Encoding(htmltab) <- "UTF-8"
+  list(
+    tags$style(type="text/css", paste(css, collapse="\n")),
+    tags$script(sprintf(
+      '$( "table" ).addClass( "table %s" );', style
+    )),
+    HTML(htmltab)
+  )
+}
 
 server <- function(input, output, session) {
+
+
+
+
 
   dat <- data.frame(cbind(Condition = rep(c("Treatment", "Control"), 2),
                           Gender = rep(c("Female", "Male"), each = 2)),
@@ -63,7 +95,7 @@ server <- function(input, output, session) {
     highchart() %>%
       hc_chart(animation = FALSE) %>%
       hc_add_theme(hc_theme_google()) %>%
-      hc_title(text = "ANOVA") %>%
+      hc_title(text = "Drag-around ANOVA") %>%
       hc_tooltip(valueDecimals = 2) %>%
       hc_yAxis(min = 0, max = 5) %>%
       hc_subtitle(text = "2x2 Anova model") %>%
@@ -124,10 +156,33 @@ server <- function(input, output, session) {
   output$dattab <- renderTable({changed_dat}, digits = 1)
 
 
-  output$anova_results <- renderTable({
-    # as.data.frame(summary(anova_tab)[[1]])
-    anova_tab
-    }, rownames = FALSE, digits = 2, align = 'r')
+  output$anova_results <- renderUI({
+    # define CSS tags
+    css <- c("#sigcol {background-color: #e6ffb3;}",
+             "#inscol {background-color: #ff9999;}")
+    # example data frame
+    # add the tag inside the cells
+
+    sig <- anova_tab[,3] < .05
+
+    anova_tab <- apply(anova_tab, 2, function(x) paste(x, ifelse(sig, "#sigcol", "#inscol")))
+
+    # generate html table with pander package and markdown package
+    htmltab <- markdownToHTML(
+      text = pandoc.table.return(
+        anova_tab,
+        style="rmarkdown", split.tables=Inf
+      ),
+      fragment.only=TRUE
+    )
+    colortable(htmltab, css)
+  })
+
+    # renderTable({
+    # # as.data.frame(summary(anova_tab)[[1]])
+    # anova_tab
+    # }, rownames = FALSE, digits = 2, align = 'r')
+
 
 
 }

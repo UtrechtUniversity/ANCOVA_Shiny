@@ -4,8 +4,7 @@
 library(shiny)
 library(shinydashboard)
 library(highcharter)
-library(rpsychi)
-# library(rCharts)
+library(DT)
 
 
 uu_color <- " #ffcd00"
@@ -118,7 +117,7 @@ ui <- dashboardPage(
               column(width = 6,
               # box(width = 12, align = "center",
                   h4("Anova"),
-                  tableOutput("anova_results")
+                  uiOutput("anova_results")
               # ),
               # box(width = 12, align = "center",
               #     h4("Anova (text)"),
