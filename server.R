@@ -13,22 +13,45 @@ server <- function(input, output, session) {
   #   dat
   # })
 
-  gen_exact_data <- function(n = 25, mean = 0, sd = 1) {
-    as.numeric(sd * (scale(rnorm(n = n)) + mean))
+  # Number per group
+  # n_g <- 25
+
+  # gen_exact_data <- function(n = 25, mean = 0, sd = 1) {
+    # as.numeric(sd * (scale(rnorm(n = n)) + mean))
+  # }
+
+  # compute_aov_old <- function(data) {
+  #   aovdat <- rbind(
+  #     cbind("Treatment", "Female", gen_exact_data(25, mean = data[1, 3])),
+  #     cbind("Control", "Female",   gen_exact_data(25, mean = data[2, 3])),
+  #     cbind("Treatment", "Male",   gen_exact_data(25, mean = data[3, 3])),
+  #     cbind("Control", "Male",     gen_exact_data(25, mean = data[4, 3]))
+  #   )
+  #   aovdat <- as.data.frame(aovdat)
+  #   aovdat[, 3] <- as.numeric(aovdat[, 3])
+  #   colnames(aovdat) <- c("Condition", "Gender", "x")
+  #   aov(x ~ Condition * Gender, data = aovdat)
+  # }
+
+  svar <- function(x) mean((x - mean(x))^2)
+
+
+  compute_aov <- function(mus) {
+
+    MSb <-  svar(mus) * 100
+    MSg <-  svar(c(sum(mus[1:2]),     sum(mus[3:4]))     / 2) * 100
+    MSc <-  svar(c(sum(mus[c(1, 3)]), sum(mus[c(2, 4)])) / 2) * 100
+    MSint <-  MSb - MSg - MSc
+
+    p_vec <- pf(q = c(MSc, MSg, MSint), df1 = 1, df2 = 96, lower.tail = FALSE)
+
+    out <- cbind(c("Condition", "Gender", "Condition:Gender"),
+                 sprintf("%.3f", c(MSb, MSg, MSc)),
+                 sprintf("%.3f", p_vec, 3))
+    colnames(out) <- c(" ", "F-value", "p-value")
+    out
   }
 
-  compute_aov <- function(data) {
-    aovdat <- rbind(
-      cbind("Treatment", "Female", gen_exact_data(25, mean = data[1, 3])),
-      cbind("Control", "Female",   gen_exact_data(25, mean = data[2, 3])),
-      cbind("Treatment", "Male",   gen_exact_data(25, mean = data[3, 3])),
-      cbind("Control", "Male",     gen_exact_data(25, mean = data[4, 3]))
-    )
-    aovdat <- as.data.frame(aovdat)
-    aovdat[, 3] <- as.numeric(aovdat[, 3])
-    colnames(aovdat) <- c("Condition", "Gender", "x")
-    aov(x ~ Condition + Gender, data = aovdat)
-  }
 
 
   output$anova_plot <- renderHighchart({
@@ -56,6 +79,7 @@ server <- function(input, output, session) {
           point = list(
             events = list(drag = dropFunction)
           ),
+          dragPrecisionY = .1,
           stickyTracking = FALSE
         ),
         column = list(
@@ -75,20 +99,22 @@ server <- function(input, output, session) {
   makeReactiveBinding("changed_dat")
   makeReactiveBinding("anova_tab")
 
-  outputText <- "Nothing yet."
+  # outputText <- "Nothing yet."
+  outputText <- ""
 
-  anova_tab <- compute_aov(dat)
+  anova_tab <- compute_aov(dat[, 3])
 
 
   observeEvent(input$drop_result, {
     newy <- round(as.numeric(input$drop_result[1]), 2)
     cond <- input$drop_result[2]
     gend <- ifelse(as.numeric(input$drop_result[3]), "Male", "Female")
-    outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
-                         " condition to ", newy, ".")
+    # outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
+                         # " condition to ", newy, ".")
     changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "mu"] <<- newy
 
-    anova_tab <<- compute_aov(changed_dat)
+    anova_tab <<- compute_aov(changed_dat[, 3])
+    # anova_tab[]
 
   })
 
@@ -98,8 +124,9 @@ server <- function(input, output, session) {
 
 
   output$anova_results <- renderTable({
-    as.data.frame(summary(anova_tab)[[1]])
-    }, rownames = TRUE)
+    # as.data.frame(summary(anova_tab)[[1]])
+    anova_tab
+    }, rownames = FALSE, digits = 2)
 
 
 }

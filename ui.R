@@ -4,6 +4,7 @@
 library(shiny)
 library(shinydashboard)
 library(highcharter)
+library(rpsychi)
 # library(rCharts)
 
 
