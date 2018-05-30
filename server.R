@@ -46,7 +46,7 @@ server <- function(input, output, session) {
     p_vec <- pf(q = c(MSc, MSg, MSint), df1 = 1, df2 = 96, lower.tail = FALSE)
 
     out <- cbind(c("Condition", "Gender", "Condition:Gender"),
-                 sprintf("%.3f", c(MSb, MSg, MSc)),
+                 sprintf("%.1f", c(MSb, MSg, MSc)),
                  sprintf("%.3f", p_vec, 3))
     colnames(out) <- c(" ", "F-value", "p-value")
     out
@@ -78,7 +78,7 @@ server <- function(input, output, session) {
           point = list(
             events = list(drag = dropFunction)
           ),
-          dragPrecisionY = .25,
+          dragPrecisionY = .5,
           dragMinY = 0,
           dragMaxY = 5,
           stickyTracking = FALSE
@@ -121,13 +121,13 @@ server <- function(input, output, session) {
 
   output$text <- renderText({outputText})
 
-  output$dattab <- renderTable({changed_dat})
+  output$dattab <- renderTable({changed_dat}, digits = 1)
 
 
   output$anova_results <- renderTable({
     # as.data.frame(summary(anova_tab)[[1]])
     anova_tab
-    }, rownames = FALSE, digits = 2)
+    }, rownames = FALSE, digits = 2, align = 'r')
 
 
 }
