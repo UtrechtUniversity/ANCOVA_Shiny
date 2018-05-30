@@ -26,6 +26,26 @@ ui <- dashboardPage(
                                menuItem("ANCOVA", tabName = "tab2"),
                                # menuItem("add 3rd tab name", tabName = "tab3"),
                                menuItem("Disclaimer", tabName = "Disclaimer"),
+
+
+
+                               div("Shiny app by",
+                                   a(href="https://www.uu.nl/staff/KTMulder/0",
+                                     target = "_blank",
+                                     "Kees Mulder"),align="right", style = "font-size: 10pt"),
+
+                               div("Base R code by",
+                                   a(href="https://www.uu.nl/staff/KTMulder/0",target="_blank",
+                                     "Kees Mulder"),align="right", style = "font-size: 10pt"),
+
+                               div("Base Layout by",
+                                   a(href="https://www.uu.nl/medewerkers/KMLek/0",target="_blank",
+                                     "Kimberley Lek"),align="right", style = "font-size: 10pt"),
+
+                               div("Shiny source files:",
+                                   a(href="https://github.com/EducationalShinyUU/ANCOVA_Shiny",
+                                     target="_blank","GitHub"),align="right", style = "font-size: 10pt"),
+
                                HTML("<br><br><br><br><br><br><br><br><br><br><br><br><br><br>"),
                                img(src = 'logo.png', align = "left")
 
@@ -35,6 +55,8 @@ ui <- dashboardPage(
                                ### position of the UU logo (make sure it is approximately at the bottom of the
                                ### screen when opened)
                    )
+                         # href="http://www.github.com/keesmulder",
+
   ),
 
   dashboardBody(
@@ -124,22 +146,22 @@ ui <- dashboardPage(
               #     verbatimTextOutput("anova_text")
               )
               )
-              ),
+              )
               # ),
 
 
-      tabItem(tabName = "tab2", box(width = 12, align = "center",
-                                    h4(""),
-                                    column(12,align = "left",
-
-                                           h5("Development",
-                                              br(),
-                                              br(),
-                                              tags$ul(
-                                                tags$li("Utrecht University lay-out developed by Kimberley Lek."),
-                                                tags$li("This application is developed by Kees Mulder.")
-                                              ) # end tags$ul
-                                           ))))
+      # tabItem(tabName = "tab2", box(width = 12, align = "center",
+      #                               h4(""),
+      #                               column(12,align = "left",
+      #
+      #                                      h5("Development",
+      #                                         br(),
+      #                                         br(),
+      #                                         tags$ul(
+      #                                           tags$li("Utrecht University lay-out developed by Kimberley Lek."),
+      #                                           tags$li("This application is developed by Kees Mulder.")
+      #                                         ) # end tags$ul
+      #                                      ))))
 
 
     )
