@@ -5,6 +5,11 @@ library(shiny)
 library(shinydashboard)
 library(highcharter)
 library(DT)
+library(pander)
+library(markdown)
+library(stringr)
+library(shiny)
+
 
 
 uu_color <- " #ffcd00"

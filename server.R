@@ -1,8 +1,3 @@
-library(pander)
-library(markdown)
-library(stringr)
-library(shiny)
-
 # function derived from the highlightHTMLcells() function of the highlightHTML package
 colortable <- function(htmltab, css, style="table-condensed table-bordered"){
   tmp <- str_split(htmltab, "\n")[[1]]
@@ -72,7 +67,7 @@ server <- function(input, output, session) {
       hc_chart(animation = FALSE) %>%
       hc_add_theme(hc_theme_google()) %>%
       hc_title(text = "Drag-around ANOVA") %>%
-      hc_tooltip(valueDecimals = 2) %>%
+      hc_tooltip(valueDecimals = 1) %>%
       hc_yAxis(min = 0, max = 5) %>%
       hc_subtitle(text = "2x2 Anova model") %>%
       hc_xAxis(categories = c("Female", "Male"), title = list(text = "Gender")) %>%
@@ -103,10 +98,47 @@ server <- function(input, output, session) {
     return(h1)
   })
 
+  output$ancova_plot <- renderHighchart({
+
+    # dat <- Dataset()
+    dropFunction <- JS("function(event){
+                      Shiny.onInputChange('drop_result', [this.y, this.series.name, this.x]);}")
+
+    highchart() %>%
+      hc_chart(animation = FALSE) %>%
+      hc_add_theme(hc_theme_google()) %>%
+      hc_title(text = "Drag-around ANCOVA") %>%
+      hc_tooltip(valueDecimals = 2) %>%
+      hc_yAxis(min = 0, max = 5) %>%
+      hc_subtitle(text = "Ancova model") %>%
+      hc_legend(labelFormatter = JS("function(e) {return this.name;}")) %>%
+      hc_plotOptions(
+        series = list(
+          point = list(
+            events = list(drag = dropFunction)
+          ),
+          dragPrecisionY = .5,
+          dragMinY = 0,
+          dragMaxY = 5,
+          stickyTracking = FALSE
+        ),
+        column = list(
+          stacking = "normal"
+        ),
+        line = list(
+          cursor = "ns-resize"
+        )
+      ) -> h2
+
+
+    return(h2)
+  })
+
 
   makeReactiveBinding("outputText")
   makeReactiveBinding("changed_dat")
   makeReactiveBinding("anova_tab")
+  makeReactiveBinding("ancova_tab")
 
   # outputText <- "Nothing yet."
   outputText <- ""
