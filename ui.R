@@ -32,8 +32,6 @@ ui <- dashboardPage(
                      # menuItem("add 3rd tab name", tabName = "tab3"),
                      menuItem("Disclaimer", tabName = "Disclaimer"),
 
-
-
                      div("Shiny app by",
                          a(href="https://www.uu.nl/staff/KTMulder/0",
                            target = "_blank",
@@ -153,20 +151,15 @@ ui <- dashboardPage(
               box(width = 12, align = "center",
                   column(12, align = "left",
                          highchartOutput("ancova_plot"))
-              ),
+              )
               # box(width = 12, align = "center",
               #     column(width = 6,
               #            h4("Data"),
               #            textOutput("text", container = h5),
               #            tableOutput("dattab")
               #     ),
-                  column(width = 6,
-                         # box(width = 12, align = "center",
-                         h4("Anova"),
-                         uiOutput("ancova_results")
-                  )
-              )
 
+      )
     )
   )
 )

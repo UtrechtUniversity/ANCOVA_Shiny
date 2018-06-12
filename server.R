@@ -27,7 +27,7 @@ server <- function(input, output, session) {
 
 
 
-
+  n <- 60
 
   dat <- data.frame(cbind(Condition = rep(c("Treatment", "Control"), 2),
                           Gender = rep(c("Female", "Male"), each = 2)),
@@ -41,15 +41,17 @@ server <- function(input, output, session) {
 
   compute_aov <- function(mus) {
 
-    MSb <-  svar(mus) * 60
-    MSg <-  svar(c(sum(mus[1:2]),     sum(mus[3:4]))     / 2) * 60
-    MSc <-  svar(c(sum(mus[c(1, 3)]), sum(mus[c(2, 4)])) / 2) * 60
+    MSb <-  svar(mus) * n
+    MSg <-  svar(c(sum(mus[1:2]),     sum(mus[3:4]))     / 2) * n
+    MSc <-  svar(c(sum(mus[c(1, 3)]), sum(mus[c(2, 4)])) / 2) * n
     MSint <-  MSb - MSg - MSc
 
-    p_vec <- pf(q = c(MSc, MSg, MSint), df1 = 1, df2 = 56, lower.tail = FALSE)
+    p_vec <- pf(q = c(MSc, MSg, MSint), df1 = 1, df2 = n - 4, lower.tail = FALSE)
 
     out <- cbind(c("Condition", "Gender", "Condition:Gender"),
-                 sprintf("%.1f", c(MSb, MSg, MSc)),
+                 sprintf("%.1f", c(MSb, MSg, MSint)),
+                 1,
+                 n - 4,
                  sprintf("%.3f", p_vec, 3))
     colnames(out) <- c(" ", "F-value", "p-value")
     out
@@ -105,21 +107,39 @@ server <- function(input, output, session) {
                       Shiny.onInputChange('drop_result', [this.y, this.series.name, this.x]);}")
 
     highchart() %>%
-      hc_chart(animation = FALSE) %>%
+      hc_chart(animation = FALSE, type = "line") %>%
       hc_add_theme(hc_theme_google()) %>%
       hc_title(text = "Drag-around ANCOVA") %>%
       hc_tooltip(valueDecimals = 2) %>%
       hc_yAxis(min = 0, max = 5) %>%
+      hc_xAxis(min = 0, max = 1) %>%
       hc_subtitle(text = "Ancova model") %>%
       hc_legend(labelFormatter = JS("function(e) {return this.name;}")) %>%
+      hc_add_series(name = "1a", data = data.frame(x = .3, y = 2), type = "scatter",
+                    hcaes(x, y),
+                    draggableX = TRUE, draggableY = TRUE) %>%
+      hc_add_series(name = "2a", data = data.frame(x = .1, y = 2), type = "scatter",
+                    hcaes(x, y),
+                    draggableX = TRUE, draggableY = TRUE) %>%
+      hc_add_series(name = "1b", data = data.frame(x = .4, y = 2), type = "scatter",
+                    hcaes(x, y),
+                    draggableX = TRUE, draggableY = TRUE) %>%
+      hc_add_series(name = "1b", data = data.frame(x = .7, y = 2), type = "scatter",
+                    hcaes(x, y),
+                    draggableX = TRUE, draggableY = TRUE) %>%
+      hc_add_series(name = "Male", data = 1:2, type = "line") %>%
+      hc_add_series(name = "Female", data = 2:1, type = "line") %>%
       hc_plotOptions(
         series = list(
           point = list(
             events = list(drag = dropFunction)
           ),
-          dragPrecisionY = .5,
+          dragPrecisionY = .05,
+          dragPrecisionY = .05,
           dragMinY = 0,
           dragMaxY = 5,
+          dragMinX = 0,
+          dragMaxX = 1,
           stickyTracking = FALSE
         ),
         column = list(
