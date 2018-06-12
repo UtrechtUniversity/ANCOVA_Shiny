@@ -41,12 +41,12 @@ server <- function(input, output, session) {
 
   compute_aov <- function(mus) {
 
-    MSb <-  svar(mus) * 100
-    MSg <-  svar(c(sum(mus[1:2]),     sum(mus[3:4]))     / 2) * 100
-    MSc <-  svar(c(sum(mus[c(1, 3)]), sum(mus[c(2, 4)])) / 2) * 100
+    MSb <-  svar(mus) * 60
+    MSg <-  svar(c(sum(mus[1:2]),     sum(mus[3:4]))     / 2) * 60
+    MSc <-  svar(c(sum(mus[c(1, 3)]), sum(mus[c(2, 4)])) / 2) * 60
     MSint <-  MSb - MSg - MSc
 
-    p_vec <- pf(q = c(MSc, MSg, MSint), df1 = 1, df2 = 96, lower.tail = FALSE)
+    p_vec <- pf(q = c(MSc, MSg, MSint), df1 = 1, df2 = 56, lower.tail = FALSE)
 
     out <- cbind(c("Condition", "Gender", "Condition:Gender"),
                  sprintf("%.1f", c(MSb, MSg, MSc)),
@@ -81,7 +81,7 @@ server <- function(input, output, session) {
           point = list(
             events = list(drag = dropFunction)
           ),
-          dragPrecisionY = .5,
+          dragPrecisionY = .1,
           dragMinY = 0,
           dragMaxY = 5,
           stickyTracking = FALSE
