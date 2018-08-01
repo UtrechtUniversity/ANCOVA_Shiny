@@ -166,6 +166,7 @@ server <- function(input, output, session) {
   anova_tab <- compute_aov(dat[, 3])
 
 
+
   observeEvent(input$drop_result, {
     newy <- round(as.numeric(input$drop_result[1]), 1)
     cond <- input$drop_result[2]
@@ -179,12 +180,35 @@ server <- function(input, output, session) {
 
   })
 
+  observeEvent(input$n_anova, {
+    newy <- round(as.numeric(input$drop_result[1]), 1)
+    cond <- input$drop_result[2]
+    gend <- ifelse(as.numeric(input$drop_result[3]), "Male", "Female")
+    # outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
+    # " condition to ", newy, ".")
+    changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "mu"] <<- newy
+
+    anova_tab <<- compute_aov(changed_dat[, 3], n = input$n_anova)
+    # anova_tab[]
+
+  })
+
   output$text <- renderText({outputText})
 
   output$dattab <- renderTable({cbind(changed_dat, n = sprintf("%.0f", n = input$n_anova))}, digits = c(0, 0, 1, 0))
 
 
   output$anova_results <- renderUI({
+
+    # newy <- round(as.numeric(input$drop_result[1]), 1)
+    # cond <- input$drop_result[2]
+    # gend <- ifelse(as.numeric(input$drop_result[3]), "Male", "Female")
+    # # outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
+    #                      # " condition to ", newy, ".")
+    # changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "mu"] <- newy
+    #
+    # anova_tab <- compute_aov(changed_dat[, 3], n = input$n_anova)
+
     # define CSS tags
     css <- c("#sigcol {background-color: #e6ffb3;}",
              "#inscol {background-color: #ff9999;}")
