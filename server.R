@@ -181,7 +181,7 @@ server <- function(input, output, session) {
 
   output$text <- renderText({outputText})
 
-  output$dattab <- renderTable({cbind(changed_dat, n = n)}, digits = c(0, 0, 1, 0))
+  output$dattab <- renderTable({cbind(changed_dat, n = sprintf("%.0f", n))}, digits = c(0, 0, 1, 0))
 
 
   output$anova_results <- renderUI({
