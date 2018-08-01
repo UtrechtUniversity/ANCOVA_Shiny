@@ -49,7 +49,7 @@ server <- function(input, output, session) {
     p_vec <- pf(q = c(MSc, MSg, MSint), df1 = 1, df2 = n - 4, lower.tail = FALSE)
 
     out <- cbind(c("Condition", "Gender", "Condition:Gender"),
-                 sprintf("%.1f", c(MSb, MSg, MSint)),
+                 sprintf("%.1f", c(MSc, MSg, MSint)),
                  1,
                  n - 4,
                  sprintf("%.3f", p_vec, 3))
