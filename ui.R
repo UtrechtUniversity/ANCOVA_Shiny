@@ -27,8 +27,8 @@ ui <- dashboardPage(
   dashboardSidebar(width = 350,
                    sidebarMenu(
                      # menuItem("", tabName = "home", icon = icon("home")),
-                     menuItem("ANOVA", tabName = "tab1"),
-                     menuItem("ANCOVA", tabName = "tab2"),
+                     menuItem("ANOVA", tabName = "anova"),
+                     menuItem("ANCOVA", tabName = "ancova"),
                      # menuItem("add 3rd tab name", tabName = "tab3"),
                      menuItem("Disclaimer", tabName = "Disclaimer"),
 
@@ -128,7 +128,7 @@ ui <- dashboardPage(
       #             column(12, align = "left",
       #                     h5("add app background info")))),
 
-      tabItem(tabName = "tab1",
+      tabItem(tabName = "anova",
               box(width = 12, align = "center",
                   column(12, align = "left",
                          highchartOutput("anova_plot"))
@@ -144,10 +144,15 @@ ui <- dashboardPage(
                          h4("Anova"),
                          uiOutput("anova_results")
                   )
+              ),
+              box(width = 12, align = "center",
+                  sliderInput("n_anova", "Sample size (n)", 10, 200, 60, 10)
+
               )
+
       ),
 
-      tabItem(tabName = "tab2",
+      tabItem(tabName = "ancova",
               box(width = 12, align = "center",
                   column(12, align = "left",
                          highchartOutput("ancova_plot"))
