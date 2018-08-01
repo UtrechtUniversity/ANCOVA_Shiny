@@ -27,7 +27,7 @@ server <- function(input, output, session) {
 
 
 
-  n <- 60
+
 
   dat <- data.frame(cbind(Condition = rep(c("Treatment", "Control"), 2),
                           Gender = rep(c("Female", "Male"), each = 2)),
@@ -39,7 +39,7 @@ server <- function(input, output, session) {
   svar <- function(x) mean((x - mean(x))^2)
 
 
-  compute_aov <- function(mus) {
+  compute_aov <- function(mus, n = 60) {
 
     MSb <-  svar(mus) * n
     MSg <-  svar(c(sum(mus[1:2]),     sum(mus[3:4]))     / 2) * n
@@ -174,14 +174,14 @@ server <- function(input, output, session) {
                          # " condition to ", newy, ".")
     changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "mu"] <<- newy
 
-    anova_tab <<- compute_aov(changed_dat[, 3])
+    anova_tab <<- compute_aov(changed_dat[, 3], n = input$n_anova)
     # anova_tab[]
 
   })
 
   output$text <- renderText({outputText})
 
-  output$dattab <- renderTable({cbind(changed_dat, n = sprintf("%.0f", n))}, digits = c(0, 0, 1, 0))
+  output$dattab <- renderTable({cbind(changed_dat, n = sprintf("%.0f", n = input$n_anova))}, digits = c(0, 0, 1, 0))
 
 
   output$anova_results <- renderUI({
