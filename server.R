@@ -53,7 +53,7 @@ server <- function(input, output, session) {
                  1,
                  n - 4,
                  sprintf("%.3f", p_vec, 3))
-    colnames(out) <- c(" ", "F-value", "p-value")
+    colnames(out) <- c(" ", "F-value", "df 1", "df 2", "p-value")
     out
   }
 
@@ -181,7 +181,7 @@ server <- function(input, output, session) {
 
   output$text <- renderText({outputText})
 
-  output$dattab <- renderTable({changed_dat}, digits = 1)
+  output$dattab <- renderTable({cbind(changed_dat, n = n)}, digits = c(0, 0, 1, 0))
 
 
   output$anova_results <- renderUI({
@@ -191,7 +191,7 @@ server <- function(input, output, session) {
     # example data frame
     # add the tag inside the cells
 
-    sig <- anova_tab[,3] < .05
+    sig <- anova_tab[,"p-value"] < .05
 
     anova_tab <- apply(anova_tab, 2, function(x) paste(x, ifelse(sig, "#sigcol", "#inscol")))
 
