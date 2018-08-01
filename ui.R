@@ -35,19 +35,19 @@ ui <- dashboardPage(
                      div("Shiny app by",
                          a(href="https://www.uu.nl/staff/KTMulder/0",
                            target = "_blank",
-                           "Kees Mulder"),align="right", style = "font-size: 10pt"),
+                           "Kees Mulder"),align="center", style = "font-size: 10pt"),
 
                      div("Base R code by",
                          a(href="https://www.uu.nl/staff/KTMulder/0",target="_blank",
-                           "Kees Mulder"),align="right", style = "font-size: 10pt"),
+                           "Kees Mulder"),align="center", style = "font-size: 10pt"),
 
                      div("Base Layout by",
                          a(href="https://www.uu.nl/medewerkers/KMLek/0",target="_blank",
-                           "Kimberley Lek"),align="right", style = "font-size: 10pt"),
+                           "Kimberley Lek"),align="center", style = "font-size: 10pt"),
 
                      div("Shiny source files:",
                          a(href="https://github.com/EducationalShinyUU/ANCOVA_Shiny",
-                           target="_blank","GitHub"),align="right", style = "font-size: 10pt"),
+                           target="_blank","GitHub"),align="center", style = "font-size: 10pt"),
 
                      HTML("<br><br><br><br><br><br><br><br><br><br><br><br><br><br>"),
                      img(src = 'logo.png', align = "left")
