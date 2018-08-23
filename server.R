@@ -107,7 +107,7 @@ server <- function(input, output, session) {
       hc_chart(animation = FALSE, type = "line") %>%
       hc_add_theme(hc_theme_google()) %>%
       hc_title(text = "Drag-around ANCOVA") %>%
-      hc_tooltip(valueDecimals = 2) %>%
+      hc_tooltip(headerFormat = "", valueDecimals = 2) %>%
       hc_yAxis(min = 0, max = 5) %>%
       hc_xAxis(min = 0, max = 1) %>%
       hc_subtitle(text = "Ancova model") %>%
