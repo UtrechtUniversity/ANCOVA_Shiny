@@ -28,28 +28,29 @@ ui <- dashboardPage(
                    sidebarMenu(
                      # menuItem("", tabName = "home", icon = icon("home")),
                      menuItem("ANOVA", tabName = "anova"),
-                     menuItem("ANCOVA", tabName = "ancova"),
+                     menuItem("ANCOVA", tabName = "ancova", selected = TRUE),
                      # menuItem("add 3rd tab name", tabName = "tab3"),
                      menuItem("Disclaimer", tabName = "Disclaimer"),
 
-                     div("Shiny app by",
+                     HTML("<br><br><br><br>"),
+                     div(" -  Shiny app by",
                          a(href="https://www.uu.nl/staff/KTMulder/0",
                            target = "_blank",
-                           "Kees Mulder"),align="center", style = "font-size: 10pt"),
+                           "Kees Mulder"),align="left", style = "font-size: 10pt"),
 
-                     div("Base R code by",
+                     div(" -  Base R code by",
                          a(href="https://www.uu.nl/staff/KTMulder/0",target="_blank",
-                           "Kees Mulder"),align="center", style = "font-size: 10pt"),
+                           "Kees Mulder"),align="left", style = "font-size: 10pt"),
 
-                     div("Base Layout by",
+                     div(" -  Base Layout by",
                          a(href="https://www.uu.nl/medewerkers/KMLek/0",target="_blank",
-                           "Kimberley Lek"),align="center", style = "font-size: 10pt"),
+                           "Kimberley Lek"),align="left", style = "font-size: 10pt"),
 
-                     div("Shiny source files:",
+                     div(" -  Shiny source files:",
                          a(href="https://github.com/EducationalShinyUU/ANCOVA_Shiny",
-                           target="_blank","GitHub"),align="center", style = "font-size: 10pt"),
+                           target="_blank","GitHub"),align="left", style = "font-size: 10pt"),
 
-                     HTML("<br><br><br><br><br><br><br><br><br><br><br><br><br><br>"),
+                     HTML("<br><br><br><br><br><br><br><br><br><br><br><br>"),
                      img(src = 'logo.png', align = "left")
 
                      ### you can easily add extra tabs by including an extra "menuItem("...",
@@ -157,6 +158,24 @@ ui <- dashboardPage(
                   column(12, align = "left",
                          highchartOutput("ancova_plot"))
               )
+              # ,
+              # box(width = 12, align = "center",
+              #     column(width = 6,
+              #            h4("Data"),
+              #            textOutput("text_ancova", container = h5),
+              #            tableOutput("dattab_ancova")
+              #     ),
+              #     column(width = 6,
+              #            # box(width = 12, align = "center",
+              #            h4("Ancova"),
+              #            uiOutput("ancova_results")
+              #     )
+              # ),
+              # box(width = 12, align = "center",
+              #     sliderInput("n_ancova", "Sample size (n)", 10, 200, 60, 10)
+              #
+              # )
+
               # box(width = 12, align = "center",
               #     column(width = 6,
               #            h4("Data"),

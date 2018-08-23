@@ -200,14 +200,6 @@ server <- function(input, output, session) {
 
   output$anova_results <- renderUI({
 
-    # newy <- round(as.numeric(input$drop_result[1]), 1)
-    # cond <- input$drop_result[2]
-    # gend <- ifelse(as.numeric(input$drop_result[3]), "Male", "Female")
-    # # outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
-    #                      # " condition to ", newy, ".")
-    # changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "mu"] <- newy
-    #
-    # anova_tab <- compute_aov(changed_dat[, 3], n = input$n_anova)
 
     # define CSS tags
     css <- c("#sigcol {background-color: #e6ffb3;}",
