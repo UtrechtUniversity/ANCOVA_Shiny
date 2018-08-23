@@ -174,11 +174,11 @@ ui <- dashboardPage(
                          tableOutput("ancoef_tab")
 
                   ), column(width = 6,
-                         strong("Ancova results"),
+                            h4("Ancova results"),
                          uiOutput("ancova_results"),
                          hr(),
 
-                         strong("Ancova results with interaction"),
+                         h4("Ancova results with interaction"),
                          uiOutput("ancova_int_results"),
                          hr(),
                          HTML('<div style="float:left"><strong>Color legend</strong></div>'),

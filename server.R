@@ -49,15 +49,22 @@ server <- function(input, output, session) {
   ancoef     <- c(1, -.5)
 
   set.seed(1321)
-  anco_dat_x     <- rnorm(n_ancova, .5, .15)
-  anco_dat_resid <- rnorm(n_ancova, sd = .25)
-  anco_dat_g     <- rep(0:1, n_ancova/2)
+  anco_dat_x_1     <- round(as.numeric(scale(rnorm(n_ancova/2))*.15 + .5), 2)
+  anco_dat_x_2     <- round(as.numeric(scale(rnorm(n_ancova/2))*.15 + .5), 2)
+  anco_dat_resid_1 <- round(as.numeric(scale(rnorm(n_ancova/2))*.35), 2)
+  anco_dat_resid_2 <- round(as.numeric(scale(rnorm(n_ancova/2))*.35), 2)
+  anco_dat_g <- rep(0:1, each = n_ancova/2)
+  anco_dat_x <- c(anco_dat_x_1, anco_dat_x_2)
+  anco_dat_resid <- c(anco_dat_resid_1, anco_dat_resid_2)
+
   anco_dat <- data.frame(g = anco_dat_g,
                          x = anco_dat_x,
                          y = anco_endpt[1 + 2 * anco_dat_g] + # Intercept
                            ancoef[1 + anco_dat_g] * anco_dat_x + # Regression
                            anco_dat_resid) # Residual
   changed_anco_dat <- anco_dat
+
+  anco_dat %>% group_by(g) %>% summarize(mean(x), sd(x))
 
   svar <- function(x) mean((x - mean(x))^2)
   compute_aov <- function(mus, n = 60) {
@@ -94,6 +101,7 @@ server <- function(input, output, session) {
                  sprintf("%.2f", coef_mat[, 3]),
                  sprintf("%.3f", coef_mat[, 4]))
     colnames(out) <- c(" ", "Coefficient", "t-value", "p-value")
+    print(coef_mat)
     out
   }
 
@@ -174,8 +182,8 @@ server <- function(input, output, session) {
           point = list(
             events = list(drop = dropFunction)
           ),
-          dragPrecisionY = .01,
-          dragPrecisionY = .01,
+          dragPrecisionY = .1,
+          dragPrecisionY = .1,
           dragMinY = 0,
           dragMaxY = 5,
           dragMinX = 0,
