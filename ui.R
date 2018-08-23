@@ -167,16 +167,20 @@ ui <- dashboardPage(
               ),
               # ,
               box(width = 12, align = "center",
-              #     column(width = 6,
-              #            h4("Data"),
-              #            textOutput("text_ancova", container = h5),
-              #            tableOutput("dattab_ancova")
-              #     ),
+
                   column(width = 6,
                          # box(width = 12, align = "center",
                          h4("Ancova"),
                          tableOutput("ancoef_tab")
-                         # uiOutput("ancova_results")
+
+                  ), column(width = 6,
+                         uiOutput("ancova_results"),
+                         hr(),
+                         HTML('<div style="float:left"><strong>Color legend</strong></div>'),
+                         br(),
+                         HTML('<div style="float:left;width:4px;height:4px;border: solid 8px #e6ffb3;"></div><div style="float:left"> &nbsp;Significant</div>'),
+                         br(),
+                         HTML('<div style="float:left;width:4px;height:4px;border: solid 8px #ff9999;"></div><div style="float:left"> &nbsp;Insignificant</div>')
                   )
               )
               # box(width = 12, align = "center",

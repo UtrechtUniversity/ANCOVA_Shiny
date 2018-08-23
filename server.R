@@ -48,8 +48,8 @@ server <- function(input, output, session) {
   anco_endpt <- c(1, 2, 2, 1.5)
   ancoef     <- c(1, -.5)
 
-  anco_dat_x     <- rnorm(n_ancova, .5, .18)
-  anco_dat_resid <- rnorm(n_ancova, sd = .1)
+  anco_dat_x     <- rnorm(n_ancova, .5, .15)
+  anco_dat_resid <- rnorm(n_ancova, sd = .15)
   anco_dat_g     <- rep(0:1, n_ancova/2)
   anco_dat <- data.frame(g = anco_dat_g,
                          x = anco_dat_x,
@@ -78,12 +78,18 @@ server <- function(input, output, session) {
   }
 
   compute_anco <- function(dat) {
-    summary(lm(y ~ g + x, data = dat))$coefficients
+    coef_mat <- summary(lm(y ~ g + x, data = dat))$coefficients[-1,]
+    out <- cbind(c("Condition", "Covariate"),
+                 sprintf("%.2f", coef_mat[, 1]),
+                 sprintf("%.2f", coef_mat[, 3]),
+                 sprintf("%.3f", coef_mat[, 4]))
+    colnames(out) <- c(" ", "Coefficient", "t-value", "p-value")
+    out
   }
 
 
 
-  output$anova_plot <- renderHighchart({
+  output$anova_plot <- highcharter::renderHighchart({
 
     dropFunction <- JS("function(event){
                       Shiny.onInputChange('drop_result_aov', [this.y, this.series.name, this.x]);}")
@@ -138,8 +144,11 @@ server <- function(input, output, session) {
       hc_add_theme(hc_theme_google()) %>%
       hc_title(text = "Drag-around ANCOVA") %>%
       hc_tooltip(headerFormat = "", valueDecimals = 2) %>%
-      hc_yAxis(min = 0, max = 5) %>%
-      hc_xAxis(min = -.2, max = 1.2) %>%
+      hc_yAxis(min = 0, max = 5,
+               title = list(text = "Outcome")
+               ) %>%
+      hc_xAxis(min = -.2, max = 1.2,
+               title = list(text = "Covariate")) %>%
       hc_subtitle(text = "") %>%
       hc_legend(labelFormatter = JS("function(e) {return this.name;}")) %>%
       hc_add_series(name = "Treatment", data = anco_endpt[1:2], type = "line",
@@ -183,6 +192,7 @@ server <- function(input, output, session) {
   makeReactiveBinding("ancoef")
   makeReactiveBinding("anova_tab")
   makeReactiveBinding("ancova_tab")
+  makeReactiveBinding("ancova_int_tab")
 
   # outputText <- "Nothing yet."
   outputText <- ""
@@ -201,6 +211,7 @@ server <- function(input, output, session) {
 
     anova_tab <<- compute_aov(changed_aov_dat[, 3], n = input$n_anova)
     # anova_tab[]
+    print((anova_tab))
 
   })
 
@@ -232,7 +243,7 @@ server <- function(input, output, session) {
                                       anco_dat_resid) # Residual
 
     ancova_tab <<- compute_anco(changed_anco_dat)
-
+    print((ancova_tab))
   })
 
   # observeEvent(input$n_ancova, {
@@ -293,14 +304,14 @@ server <- function(input, output, session) {
     css <- c("#sigcol {background-color: #e6ffb3;}",
              "#inscol {background-color: #ff9999;}")
 
-    sig <- anova_tab[,"p-value"] < .05
+    sig <- ancova_tab[,"p-value"] < .05
 
-    anova_tab_out <- apply(anova_tab, 2, function(x) paste(x, ifelse(sig, "#sigcol", "#inscol")))
+    ancova_tab_out <- apply(ancova_tab, 2, function(x) paste(x, ifelse(sig, "#sigcol", "#inscol")))
 
     # generate html table with pander package and markdown package
     htmltab <- markdownToHTML(
       text = pandoc.table.return(
-        anova_tab_out,
+        ancova_tab_out,
         style="rmarkdown", split.tables=Inf
       ),
       fragment.only=TRUE
