@@ -4,10 +4,10 @@
 library(shiny)
 library(shinydashboard)
 library(highcharter)
-library(DT)
+# library(DT)
 library(pander)
 library(markdown)
-library(stringr)
+# library(stringr)
 library(shiny)
 
 
@@ -143,7 +143,14 @@ ui <- dashboardPage(
                   column(width = 6,
                          # box(width = 12, align = "center",
                          h4("Anova"),
-                         uiOutput("anova_results")
+                         uiOutput("anova_results"),
+                         hr(),
+                         HTML('<div style="float:left"><strong>Color legend</strong></div>'),
+                         br(),
+                         HTML('<div style="float:left;width:4px;height:4px;border: solid 8px #e6ffb3;"></div><div style="float:left"> &nbsp;Significant</div>'),
+                         br(),
+                         HTML('<div style="float:left;width:4px;height:4px;border: solid 8px #ff9999;"></div><div style="float:left"> &nbsp;Insignificant</div>')
+
                   )
               ),
               box(width = 12, align = "center",
