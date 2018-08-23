@@ -24,7 +24,7 @@ ui <- dashboardPage(
   skin = "black",
 
   dashboardHeader(title = "ANOVA and ANCOVA demonstrations", titleWidth = 350),
-  dashboardSidebar(width = 350,
+  dashboardSidebar(width = 280,
                    sidebarMenu(
                      # menuItem("", tabName = "home", icon = icon("home")),
                      menuItem("ANOVA", tabName = "anova"),
