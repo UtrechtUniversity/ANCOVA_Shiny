@@ -26,12 +26,12 @@ colortable <- function(htmltab, css, style="table-condensed table-bordered"){
 server <- function(input, output, session) {
 
 
-  dat <- data.frame(cbind(Condition = rep(c("Treatment", "Control"), 2),
+  aov_dat <- data.frame(cbind(Condition = rep(c("Treatment", "Control"), 2),
                           Gender = rep(c("Female", "Male"), each = 2)),
                     cbind(Mean = c(3, 2, 2, 3)))
-  rownames(dat) <- paste0("Group_", 1:nrow(dat))
+  rownames(aov_dat) <- paste0("Group_", 1:nrow(aov_dat))
 
-  changed_dat <- dat
+  changed_aov_dat <- aov_dat
 
   svar <- function(x) mean((x - mean(x))^2)
 
@@ -58,7 +58,6 @@ server <- function(input, output, session) {
 
   output$anova_plot <- renderHighchart({
 
-    # dat <- Dataset()
     dropFunction <- JS("function(event){
                       Shiny.onInputChange('drop_result_aov', [this.y, this.series.name, this.x]);}")
 
@@ -70,9 +69,9 @@ server <- function(input, output, session) {
       hc_yAxis(min = 0, max = 5) %>%
       hc_subtitle(text = "2x2 Anova model") %>%
       hc_xAxis(categories = c("Female", "Male"), title = list(text = "Gender")) %>%
-      hc_add_series(name = "Treatment", data = dat[dat$Condition == "Treatment", "Mean"],
+      hc_add_series(name = "Treatment", data = aov_dat[aov_dat$Condition == "Treatment", "Mean"],
                     draggableY = TRUE) %>%
-      hc_add_series(name = "Control", data = dat[dat$Condition == "Control", "Mean"],
+      hc_add_series(name = "Control", data = aov_dat[aov_dat$Condition == "Control", "Mean"],
                     draggableY = TRUE) %>%
       hc_legend(labelFormatter = JS("function(e) {return this.name;}")) %>%
       hc_plotOptions(
@@ -99,9 +98,8 @@ server <- function(input, output, session) {
 
   output$ancova_plot <- renderHighchart({
 
-    # dat <- Dataset()
     dropFunction <- JS("function(event){
-                      Shiny.onInputChange('drop_result_aov', [this.y, this.series.name, this.x]);}")
+                      Shiny.onInputChange('drop_result_anco', [this.y, this.series.name, this.x]);}")
 
     highchart() %>%
       hc_chart(animation = FALSE, type = "line") %>%
@@ -141,14 +139,15 @@ server <- function(input, output, session) {
 
 
   makeReactiveBinding("outputText")
-  makeReactiveBinding("changed_dat")
+  makeReactiveBinding("changed_aov_dat")
+  makeReactiveBinding("changed_anco_dat")
   makeReactiveBinding("anova_tab")
   makeReactiveBinding("ancova_tab")
 
   # outputText <- "Nothing yet."
   outputText <- ""
 
-  anova_tab <- compute_aov(dat[, 3])
+  anova_tab <- compute_aov(aov_dat[, 3])
 
 
 
@@ -158,9 +157,9 @@ server <- function(input, output, session) {
     gend <- ifelse(as.numeric(input$drop_result_aov[3]), "Male", "Female")
     # outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
                          # " condition to ", newy, ".")
-    changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "Mean"] <<- newy
+    changed_aov_dat[(aov_dat$Condition == cond) & (aov_dat$Gender == gend), "Mean"] <<- newy
 
-    anova_tab <<- compute_aov(changed_dat[, 3], n = input$n_anova)
+    anova_tab <<- compute_aov(changed_aov_dat[, 3], n = input$n_anova)
     # anova_tab[]
 
   })
@@ -169,25 +168,44 @@ server <- function(input, output, session) {
     newy <- round(as.numeric(input$drop_result_aov[1]), 1)
     cond <- input$drop_result_aov[2]
     gend <- ifelse(as.numeric(input$drop_result_aov[3]), "Male", "Female")
-    # outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
-    # " condition to ", newy, ".")
-    changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "Mean"] <<- newy
+    changed_aov_dat[(aov_dat$Condition == cond) & (aov_dat$Gender == gend), "Mean"] <<- newy
 
-    anova_tab <<- compute_aov(changed_dat[, 3], n = input$n_anova)
-    # anova_tab[]
-
+    anova_tab <<- compute_aov(changed_aov_dat[, 3], n = input$n_anova)
   })
+
+
+  # observeEvent(input$drop_result_anco, {
+  #   newy <- round(as.numeric(input$drop_result_anco[1]), 1)
+  #   cond <- input$drop_result_anco[2]
+  #   changed_anco_dat[(anco_dat$Condition == cond), "Mean"] <<- newy
+  #
+  #   ancova_tab <<- compute_aov(changed_anco_dat[, 3], n = input$n_ancova)
+  #
+  # })
+
+  # observeEvent(input$n_ancova, {
+  #   newy <- round(as.numeric(input$drop_result_aov[1]), 1)
+  #   cond <- input$drop_result_aov[2]
+  #   gend <- ifelse(as.numeric(input$drop_result_aov[3]), "Male", "Female")
+  #   # outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
+  #   # " condition to ", newy, ".")
+  #   changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "Mean"] <<- newy
+  #
+  #   anova_tab <<- compute_aov(changed_dat[, 3], n = input$n_anova)
+  #   # anova_tab[]
+  # })
 
   output$text <- renderText({outputText})
 
-  output$dattab <- renderTable({
-    cbind(changed_dat, n = sprintf("%.0f", n = input$n_anova))
+  output$aov_dattab <- renderTable({
+    cbind(changed_aov_dat[, 1:2],
+          Mean = sprintf("%.1f", changed_aov_dat[, 3]), n = sprintf("%.0f", input$n_anova))
     },
     digits = c(0, 0, 1, 0))
 
 
+  #### ANOVA RESULTS
   output$anova_results <- renderUI({
-
 
     # define CSS tags
     css <- c("#sigcol {background-color: #e6ffb3;}",
@@ -197,12 +215,12 @@ server <- function(input, output, session) {
 
     sig <- anova_tab[,"p-value"] < .05
 
-    anova_tab <- apply(anova_tab, 2, function(x) paste(x, ifelse(sig, "#sigcol", "#inscol")))
+    anova_tab_out <- apply(anova_tab, 2, function(x) paste(x, ifelse(sig, "#sigcol", "#inscol")))
 
     # generate html table with pander package and markdown package
     htmltab <- markdownToHTML(
       text = pandoc.table.return(
-        anova_tab,
+        anova_tab_out,
         style="rmarkdown", split.tables=Inf
       ),
       fragment.only=TRUE
@@ -210,10 +228,31 @@ server <- function(input, output, session) {
     colortable(htmltab, css)
   })
 
-    # renderTable({
-    # # as.data.frame(summary(anova_tab)[[1]])
-    # anova_tab
-    # }, rownames = FALSE, digits = 2, align = 'r')
+
+
+  #### ANCOVA RESULTS
+  output$ancova_results <- renderUI({
+
+    # define CSS tags
+    css <- c("#sigcol {background-color: #e6ffb3;}",
+             "#inscol {background-color: #ff9999;}")
+    # example data frame
+    # add the tag inside the cells
+
+    sig <- anova_tab[,"p-value"] < .05
+
+    anova_tab_out <- apply(anova_tab, 2, function(x) paste(x, ifelse(sig, "#sigcol", "#inscol")))
+
+    # generate html table with pander package and markdown package
+    htmltab <- markdownToHTML(
+      text = pandoc.table.return(
+        anova_tab_out,
+        style="rmarkdown", split.tables=Inf
+      ),
+      fragment.only=TRUE
+    )
+    colortable(htmltab, css)
+  })
 
 
 

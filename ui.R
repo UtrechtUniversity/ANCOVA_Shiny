@@ -138,7 +138,7 @@ ui <- dashboardPage(
                   column(width = 6,
                          h4("Data"),
                          textOutput("text", container = h5),
-                         tableOutput("dattab")
+                         tableOutput("aov_dattab")
                   ),
                   column(width = 6,
                          # box(width = 12, align = "center",
@@ -164,20 +164,20 @@ ui <- dashboardPage(
               box(width = 12, align = "center",
                   column(12, align = "left",
                          highchartOutput("ancova_plot"))
-              )
+              ),
               # ,
-              # box(width = 12, align = "center",
+              box(width = 12, align = "center",
               #     column(width = 6,
               #            h4("Data"),
               #            textOutput("text_ancova", container = h5),
               #            tableOutput("dattab_ancova")
               #     ),
-              #     column(width = 6,
-              #            # box(width = 12, align = "center",
-              #            h4("Ancova"),
-              #            uiOutput("ancova_results")
-              #     )
-              # ),
+                  column(width = 6,
+                         # box(width = 12, align = "center",
+                         h4("Ancova"),
+                         uiOutput("ancova_results")
+                  )
+              )
               # box(width = 12, align = "center",
               #     sliderInput("n_ancova", "Sample size (n)", 10, 200, 60, 10)
               #
@@ -187,7 +187,7 @@ ui <- dashboardPage(
               #     column(width = 6,
               #            h4("Data"),
               #            textOutput("text", container = h5),
-              #            tableOutput("dattab")
+              #            tableOutput("aov_dattab")
               #     ),
 
       )
