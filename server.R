@@ -25,6 +25,16 @@ colortable <- function(htmltab, css, style="table-condensed table-bordered"){
 
 server <- function(input, output, session) {
 
+  # COLORS
+  # #e6550d rgba(230, 85, 13, .5)
+  # #7fcdbb rgba(127, 205, 187, .5)
+  reddish   <- 'rgba(230, 85, 13, 1)'
+  blueish   <- 'rgba(44, 127, 184, 1)'
+  reddish_5 <- 'rgba(230, 85, 13, .3)'
+  blueish_5 <- 'rgba(44, 127, 184, .3)'
+
+
+
   # ANOVA DATA
   aov_dat <- data.frame(cbind(Condition = rep(c("Treatment", "Control"), 2),
                           Gender = rep(c("Female", "Male"), each = 2)),
@@ -87,9 +97,9 @@ server <- function(input, output, session) {
       hc_subtitle(text = "2x2 Anova model") %>%
       hc_xAxis(categories = c("Female", "Male"), title = list(text = "Gender")) %>%
       hc_add_series(name = "Treatment", data = aov_dat[aov_dat$Condition == "Treatment", "Mean"],
-                    draggableY = TRUE) %>%
+                    draggableY = TRUE, color = blueish) %>%
       hc_add_series(name = "Control", data = aov_dat[aov_dat$Condition == "Control", "Mean"],
-                    draggableY = TRUE) %>%
+                    draggableY = TRUE, color = reddish) %>%
       hc_legend(labelFormatter = JS("function(e) {return this.name;}")) %>%
       hc_plotOptions(
         series = list(
@@ -99,6 +109,7 @@ server <- function(input, output, session) {
           dragPrecisionY = .1,
           dragMinY = 0,
           dragMaxY = 5,
+          animation = FALSE,
           stickyTracking = FALSE
         ),
         column = list(
@@ -112,6 +123,8 @@ server <- function(input, output, session) {
 
     return(h1)
   })
+
+
 
   output$ancova_plot <- highcharter::renderHighchart({
 
@@ -129,12 +142,14 @@ server <- function(input, output, session) {
       hc_xAxis(min = -.2, max = 1.2) %>%
       hc_subtitle(text = "") %>%
       hc_legend(labelFormatter = JS("function(e) {return this.name;}")) %>%
-      hc_add_series(name = "Treatment", data = anco_endpt[1:2], type = "line", draggableY = TRUE) %>%
-      hc_add_series(name = "Control", data = anco_endpt[3:4], type = "line", draggableY = TRUE) %>%
+      hc_add_series(name = "Treatment", data = anco_endpt[1:2], type = "line",
+                    draggableY = TRUE, color = blueish) %>%
+      hc_add_series(name = "Control", data = anco_endpt[3:4], type = "line",
+                    draggableY = TRUE, color = reddish) %>%
       hc_add_series(data = changed_anco_dat[!is_control, 2:3],
-                    type = "scatter", color = "blue", showInLegend = FALSE) %>%
+                    type = "scatter", color = blueish_5, showInLegend = FALSE) %>%
       hc_add_series(data = changed_anco_dat[is_control, 2:3],
-                    type = "scatter", color = "red", showInLegend = FALSE) %>%
+                    type = "scatter", color = reddish_5, showInLegend = FALSE) %>%
       hc_plotOptions(
         series = list(
           point = list(
