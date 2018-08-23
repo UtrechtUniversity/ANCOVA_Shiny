@@ -27,8 +27,8 @@ ui <- dashboardPage(
   dashboardSidebar(width = 280,
                    sidebarMenu(
                      # menuItem("", tabName = "home", icon = icon("home")),
-                     menuItem("ANOVA", tabName = "anova"),
-                     menuItem("ANCOVA", tabName = "ancova", selected = TRUE),
+                     menuItem("ANOVA", tabName = "anova", selected = TRUE),
+                     menuItem("ANCOVA", tabName = "ancova"),
                      # menuItem("add 3rd tab name", tabName = "tab3"),
                      menuItem("Disclaimer", tabName = "Disclaimer"),
 
