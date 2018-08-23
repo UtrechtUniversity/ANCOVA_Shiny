@@ -64,7 +64,6 @@ server <- function(input, output, session) {
                            anco_dat_resid) # Residual
   changed_anco_dat <- anco_dat
 
-  anco_dat %>% group_by(g) %>% summarize(mean(x), sd(x))
 
   svar <- function(x) mean((x - mean(x))^2)
   compute_aov <- function(mus, n = 60) {
