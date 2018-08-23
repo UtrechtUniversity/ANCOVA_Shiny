@@ -48,8 +48,9 @@ server <- function(input, output, session) {
   anco_endpt <- c(1, 2, 2, 1.5)
   ancoef     <- c(1, -.5)
 
+  set.seed(1321)
   anco_dat_x     <- rnorm(n_ancova, .5, .15)
-  anco_dat_resid <- rnorm(n_ancova, sd = .15)
+  anco_dat_resid <- rnorm(n_ancova, sd = .25)
   anco_dat_g     <- rep(0:1, n_ancova/2)
   anco_dat <- data.frame(g = anco_dat_g,
                          x = anco_dat_x,
@@ -86,6 +87,15 @@ server <- function(input, output, session) {
     colnames(out) <- c(" ", "Coefficient", "t-value", "p-value")
     out
   }
+  compute_anco_int <- function(dat) {
+    coef_mat <- summary(lm(y ~ g * x, data = dat))$coefficients[-1,]
+    out <- cbind(c("Condition", "Covariate", "Condition:Covariate"),
+                 sprintf("%.2f", coef_mat[, 1]),
+                 sprintf("%.2f", coef_mat[, 3]),
+                 sprintf("%.3f", coef_mat[, 4]))
+    colnames(out) <- c(" ", "Coefficient", "t-value", "p-value")
+    out
+  }
 
 
 
@@ -99,7 +109,7 @@ server <- function(input, output, session) {
       hc_add_theme(hc_theme_google()) %>%
       hc_title(text = "Drag-around ANOVA") %>%
       hc_tooltip(valueDecimals = 1) %>%
-      hc_yAxis(min = 0, max = 5) %>%
+      hc_yAxis(min = 0, max = 5, title = list(text = "Group mean")) %>%
       hc_subtitle(text = "2x2 Anova model") %>%
       hc_xAxis(categories = c("Female", "Male"), title = list(text = "Gender")) %>%
       hc_add_series(name = "Treatment", data = aov_dat[aov_dat$Condition == "Treatment", "Mean"],
@@ -199,6 +209,7 @@ server <- function(input, output, session) {
 
   anova_tab  <- compute_aov(aov_dat[, 3])
   ancova_tab <- compute_anco(anco_dat)
+  ancova_int_tab <- compute_anco_int(anco_dat)
 
 
   observeEvent(input$drop_result_aov, {
@@ -210,8 +221,6 @@ server <- function(input, output, session) {
     changed_aov_dat[(aov_dat$Condition == cond) & (aov_dat$Gender == gend), "Mean"] <<- newy
 
     anova_tab <<- compute_aov(changed_aov_dat[, 3], n = input$n_anova)
-    # anova_tab[]
-    print((anova_tab))
 
   })
 
@@ -243,7 +252,7 @@ server <- function(input, output, session) {
                                       anco_dat_resid) # Residual
 
     ancova_tab <<- compute_anco(changed_anco_dat)
-    print((ancova_tab))
+    ancova_int_tab <<- compute_anco_int(changed_anco_dat)
   })
 
   # observeEvent(input$n_ancova, {
@@ -312,6 +321,27 @@ server <- function(input, output, session) {
     htmltab <- markdownToHTML(
       text = pandoc.table.return(
         ancova_tab_out,
+        style="rmarkdown", split.tables=Inf
+      ),
+      fragment.only=TRUE
+    )
+    colortable(htmltab, css)
+  })
+
+  output$ancova_int_results <- renderUI({
+
+    # define CSS tags
+    css <- c("#sigcol {background-color: #e6ffb3;}",
+             "#inscol {background-color: #ff9999;}")
+
+    sig <- ancova_int_tab[,"p-value"] < .05
+
+    ancova_int_tab_out <- apply(ancova_int_tab, 2, function(x) paste(x, ifelse(sig, "#sigcol", "#inscol")))
+
+    # generate html table with pander package and markdown package
+    htmltab <- markdownToHTML(
+      text = pandoc.table.return(
+        ancova_int_tab_out,
         style="rmarkdown", split.tables=Inf
       ),
       fragment.only=TRUE
