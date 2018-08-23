@@ -25,17 +25,30 @@ colortable <- function(htmltab, css, style="table-condensed table-bordered"){
 
 server <- function(input, output, session) {
 
-
+  # ANOVA DATA
   aov_dat <- data.frame(cbind(Condition = rep(c("Treatment", "Control"), 2),
                           Gender = rep(c("Female", "Male"), each = 2)),
                     cbind(Mean = c(3, 2, 2, 3)))
   rownames(aov_dat) <- paste0("Group_", 1:nrow(aov_dat))
-
   changed_aov_dat <- aov_dat
 
+
+  # ANCOVA DATA
+  n_ancova   <- 100
+  anco_endpt <- c(1, 2, 2, 1.5)
+  ancoef     <- c(1, -.5)
+
+  anco_dat_x     <- rnorm(n_ancova, .5, .18)
+  anco_dat_resid <- rnorm(n_ancova, sd = .1)
+  anco_dat_g     <- rep(0:1, n_ancova/2)
+  anco_dat <- data.frame(g = anco_dat_g,
+                         x = anco_dat_x,
+                         y = anco_endpt[1 + 2 * anco_dat_g] + # Intercept
+                           ancoef[1 + anco_dat_g] * anco_dat_x + # Regression
+                           anco_dat_resid) # Residual
+  changed_anco_dat <- anco_dat
+
   svar <- function(x) mean((x - mean(x))^2)
-
-
   compute_aov <- function(mus, n = 60) {
 
     MSb <-  svar(mus) * n
@@ -52,6 +65,10 @@ server <- function(input, output, session) {
                  sprintf("%.3f", p_vec, 3))
     colnames(out) <- c(" ", "F-value", "df 1", "df 2", "p-value")
     out
+  }
+
+  compute_anco <- function(dat) {
+    summary(lm(y ~ g + x, data = dat))$coefficients
   }
 
 
@@ -110,8 +127,8 @@ server <- function(input, output, session) {
       hc_xAxis(min = 0, max = 1) %>%
       hc_subtitle(text = "Ancova model") %>%
       hc_legend(labelFormatter = JS("function(e) {return this.name;}")) %>%
-      hc_add_series(name = "Treatment", data = 1:2, type = "line", draggableY = TRUE) %>%
-      hc_add_series(name = "Control", data = 2:1, type = "line", draggableY = TRUE) %>%
+      hc_add_series(name = "Treatment", data = anco_endpt[1:2], type = "line", draggableY = TRUE) %>%
+      hc_add_series(name = "Control", data = anco_endpt[3:4], type = "line", draggableY = TRUE) %>%
       hc_plotOptions(
         series = list(
           point = list(
@@ -141,14 +158,15 @@ server <- function(input, output, session) {
   makeReactiveBinding("outputText")
   makeReactiveBinding("changed_aov_dat")
   makeReactiveBinding("changed_anco_dat")
+  makeReactiveBinding("ancoef")
   makeReactiveBinding("anova_tab")
   makeReactiveBinding("ancova_tab")
 
   # outputText <- "Nothing yet."
   outputText <- ""
 
-  anova_tab <- compute_aov(aov_dat[, 3])
-
+  anova_tab  <- compute_aov(aov_dat[, 3])
+  ancova_tab <- compute_anco(anco_dat)
 
 
   observeEvent(input$drop_result_aov, {
@@ -174,14 +192,26 @@ server <- function(input, output, session) {
   })
 
 
-  # observeEvent(input$drop_result_anco, {
-  #   newy <- round(as.numeric(input$drop_result_anco[1]), 1)
-  #   cond <- input$drop_result_anco[2]
-  #   changed_anco_dat[(anco_dat$Condition == cond), "Mean"] <<- newy
-  #
-  #   ancova_tab <<- compute_aov(changed_anco_dat[, 3], n = input$n_ancova)
-  #
-  # })
+  observeEvent(input$drop_result_anco, {
+    newy   <- round(as.numeric(input$drop_result_anco[1]), 1)
+    cond   <- input$drop_result_anco[2]
+    is_end <- as.numeric(input$drop_result_anco[3])
+
+    is_control <- identical(cond, "Control")
+
+    # Update endpoints, then coefficients
+    anco_endpt[1 + 2*is_control + is_end] <<- newy
+    ancoef[1 + is_control] <<- anco_endpt[2 + 2*is_control] - anco_endpt[1 + 2*is_control]
+
+    changed_anco_dat <<- data.frame(g = anco_dat_g,
+                                    x = anco_dat_x,
+                                    y = anco_endpt[1 + 2 * anco_dat_g] + # Intercept
+                                      ancoef[1 + anco_dat_g] * anco_dat_x + # Regression
+                                      anco_dat_resid) # Residual
+
+    ancova_tab <<- compute_anco(changed_anco_dat)
+
+  })
 
   # observeEvent(input$n_ancova, {
   #   newy <- round(as.numeric(input$drop_result_aov[1]), 1)
@@ -210,8 +240,6 @@ server <- function(input, output, session) {
     # define CSS tags
     css <- c("#sigcol {background-color: #e6ffb3;}",
              "#inscol {background-color: #ff9999;}")
-    # example data frame
-    # add the tag inside the cells
 
     sig <- anova_tab[,"p-value"] < .05
 
@@ -231,13 +259,17 @@ server <- function(input, output, session) {
 
 
   #### ANCOVA RESULTS
+
+  output$ancoef_tab <- renderTable({
+    data.frame(Group = c("Treatment", "Control"), Coefficient = ancoef)
+  })
+
+
   output$ancova_results <- renderUI({
 
     # define CSS tags
     css <- c("#sigcol {background-color: #e6ffb3;}",
              "#inscol {background-color: #ff9999;}")
-    # example data frame
-    # add the tag inside the cells
 
     sig <- anova_tab[,"p-value"] < .05
 

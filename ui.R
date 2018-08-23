@@ -7,7 +7,7 @@ library(highcharter)
 # library(DT)
 library(pander)
 library(markdown)
-# library(stringr)
+library(stringr)
 library(shiny)
 
 
@@ -175,7 +175,8 @@ ui <- dashboardPage(
                   column(width = 6,
                          # box(width = 12, align = "center",
                          h4("Ancova"),
-                         uiOutput("ancova_results")
+                         tableOutput("ancoef_tab")
+                         # uiOutput("ancova_results")
                   )
               )
               # box(width = 12, align = "center",
