@@ -113,10 +113,12 @@ server <- function(input, output, session) {
     return(h1)
   })
 
-  output$ancova_plot <- renderHighchart({
+  output$ancova_plot <- highcharter::renderHighchart({
 
     dropFunction <- JS("function(event){
                       Shiny.onInputChange('drop_result_anco', [this.y, this.series.name, this.x]);}")
+
+    is_control <- as.logical(changed_anco_dat[, 1])
 
     highchart() %>%
       hc_chart(animation = FALSE, type = "line") %>%
@@ -124,22 +126,27 @@ server <- function(input, output, session) {
       hc_title(text = "Drag-around ANCOVA") %>%
       hc_tooltip(headerFormat = "", valueDecimals = 2) %>%
       hc_yAxis(min = 0, max = 5) %>%
-      hc_xAxis(min = 0, max = 1) %>%
-      hc_subtitle(text = "Ancova model") %>%
+      hc_xAxis(min = -.2, max = 1.2) %>%
+      hc_subtitle(text = "") %>%
       hc_legend(labelFormatter = JS("function(e) {return this.name;}")) %>%
       hc_add_series(name = "Treatment", data = anco_endpt[1:2], type = "line", draggableY = TRUE) %>%
       hc_add_series(name = "Control", data = anco_endpt[3:4], type = "line", draggableY = TRUE) %>%
+      hc_add_series(data = changed_anco_dat[!is_control, 2:3],
+                    type = "scatter", color = "blue", showInLegend = FALSE) %>%
+      hc_add_series(data = changed_anco_dat[is_control, 2:3],
+                    type = "scatter", color = "red", showInLegend = FALSE) %>%
       hc_plotOptions(
         series = list(
           point = list(
-            events = list(drag = dropFunction)
+            events = list(drop = dropFunction)
           ),
-          dragPrecisionY = .05,
-          dragPrecisionY = .05,
+          dragPrecisionY = .01,
+          dragPrecisionY = .01,
           dragMinY = 0,
           dragMaxY = 5,
           dragMinX = 0,
           dragMaxX = 1,
+          animation = FALSE,
           stickyTracking = FALSE
         ),
         column = list(
@@ -261,7 +268,7 @@ server <- function(input, output, session) {
   #### ANCOVA RESULTS
 
   output$ancoef_tab <- renderTable({
-    data.frame(Group = c("Treatment", "Control"), Coefficient = ancoef)
+    data.frame(Group = c("Treatment", "Control"), Intercept = anco_endpt[c(1, 3)], Coefficient = ancoef)
   })
 
 
