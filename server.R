@@ -112,20 +112,8 @@ server <- function(input, output, session) {
       hc_xAxis(min = 0, max = 1) %>%
       hc_subtitle(text = "Ancova model") %>%
       hc_legend(labelFormatter = JS("function(e) {return this.name;}")) %>%
-      hc_add_series(name = "1a", data = data.frame(x = .3, y = 2), type = "scatter",
-                    hcaes(x, y),
-                    draggableX = TRUE, draggableY = TRUE) %>%
-      hc_add_series(name = "2a", data = data.frame(x = .1, y = 2), type = "scatter",
-                    hcaes(x, y),
-                    draggableX = TRUE, draggableY = TRUE) %>%
-      hc_add_series(name = "1b", data = data.frame(x = .4, y = 2), type = "scatter",
-                    hcaes(x, y),
-                    draggableX = TRUE, draggableY = TRUE) %>%
-      hc_add_series(name = "1b", data = data.frame(x = .7, y = 2), type = "scatter",
-                    hcaes(x, y),
-                    draggableX = TRUE, draggableY = TRUE) %>%
-      hc_add_series(name = "Male", data = 1:2, type = "line") %>%
-      hc_add_series(name = "Female", data = 2:1, type = "line") %>%
+      hc_add_series(name = "Treatment", data = 1:2, type = "line", draggableY = TRUE) %>%
+      hc_add_series(name = "Control", data = 2:1, type = "line", draggableY = TRUE) %>%
       hc_plotOptions(
         series = list(
           point = list(
