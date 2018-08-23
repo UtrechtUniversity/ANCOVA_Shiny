@@ -26,12 +26,9 @@ colortable <- function(htmltab, css, style="table-condensed table-bordered"){
 server <- function(input, output, session) {
 
 
-
-
-
   dat <- data.frame(cbind(Condition = rep(c("Treatment", "Control"), 2),
                           Gender = rep(c("Female", "Male"), each = 2)),
-                    cbind(mu = c(3, 2, 2, 3)))
+                    cbind(Mean = c(3, 2, 2, 3)))
   rownames(dat) <- paste0("Group_", 1:nrow(dat))
 
   changed_dat <- dat
@@ -73,9 +70,9 @@ server <- function(input, output, session) {
       hc_yAxis(min = 0, max = 5) %>%
       hc_subtitle(text = "2x2 Anova model") %>%
       hc_xAxis(categories = c("Female", "Male"), title = list(text = "Gender")) %>%
-      hc_add_series(name = "Treatment", data = dat[dat$Condition == "Treatment", "mu"],
+      hc_add_series(name = "Treatment", data = dat[dat$Condition == "Treatment", "Mean"],
                     draggableY = TRUE) %>%
-      hc_add_series(name = "Control", data = dat[dat$Condition == "Control", "mu"],
+      hc_add_series(name = "Control", data = dat[dat$Condition == "Control", "Mean"],
                     draggableY = TRUE) %>%
       hc_legend(labelFormatter = JS("function(e) {return this.name;}")) %>%
       hc_plotOptions(
@@ -173,7 +170,7 @@ server <- function(input, output, session) {
     gend <- ifelse(as.numeric(input$drop_result[3]), "Male", "Female")
     # outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
                          # " condition to ", newy, ".")
-    changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "mu"] <<- newy
+    changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "Mean"] <<- newy
 
     anova_tab <<- compute_aov(changed_dat[, 3], n = input$n_anova)
     # anova_tab[]
@@ -186,7 +183,7 @@ server <- function(input, output, session) {
     gend <- ifelse(as.numeric(input$drop_result[3]), "Male", "Female")
     # outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
     # " condition to ", newy, ".")
-    changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "mu"] <<- newy
+    changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "Mean"] <<- newy
 
     anova_tab <<- compute_aov(changed_dat[, 3], n = input$n_anova)
     # anova_tab[]
@@ -195,7 +192,10 @@ server <- function(input, output, session) {
 
   output$text <- renderText({outputText})
 
-  output$dattab <- renderTable({cbind(changed_dat, n = sprintf("%.0f", n = input$n_anova))}, digits = c(0, 0, 1, 0))
+  output$dattab <- renderTable({
+    cbind(changed_dat, n = sprintf("%.0f", n = input$n_anova))
+    },
+    digits = c(0, 0, 1, 0))
 
 
   output$anova_results <- renderUI({

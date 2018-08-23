@@ -147,7 +147,7 @@ ui <- dashboardPage(
                   )
               ),
               box(width = 12, align = "center",
-                  sliderInput("n_anova", "Sample size (n)", 10, 200, 60, 10)
+                  sliderInput("n_anova", "Sample size per group", 10, 200, 60, 10)
 
               )
 
