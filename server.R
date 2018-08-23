@@ -60,7 +60,7 @@ server <- function(input, output, session) {
 
     # dat <- Dataset()
     dropFunction <- JS("function(event){
-                      Shiny.onInputChange('drop_result', [this.y, this.series.name, this.x]);}")
+                      Shiny.onInputChange('drop_result_aov', [this.y, this.series.name, this.x]);}")
 
     highchart() %>%
       hc_chart(animation = FALSE) %>%
@@ -101,7 +101,7 @@ server <- function(input, output, session) {
 
     # dat <- Dataset()
     dropFunction <- JS("function(event){
-                      Shiny.onInputChange('drop_result', [this.y, this.series.name, this.x]);}")
+                      Shiny.onInputChange('drop_result_aov', [this.y, this.series.name, this.x]);}")
 
     highchart() %>%
       hc_chart(animation = FALSE, type = "line") %>%
@@ -152,10 +152,10 @@ server <- function(input, output, session) {
 
 
 
-  observeEvent(input$drop_result, {
-    newy <- round(as.numeric(input$drop_result[1]), 1)
-    cond <- input$drop_result[2]
-    gend <- ifelse(as.numeric(input$drop_result[3]), "Male", "Female")
+  observeEvent(input$drop_result_aov, {
+    newy <- round(as.numeric(input$drop_result_aov[1]), 1)
+    cond <- input$drop_result_aov[2]
+    gend <- ifelse(as.numeric(input$drop_result_aov[3]), "Male", "Female")
     # outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
                          # " condition to ", newy, ".")
     changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "Mean"] <<- newy
@@ -166,9 +166,9 @@ server <- function(input, output, session) {
   })
 
   observeEvent(input$n_anova, {
-    newy <- round(as.numeric(input$drop_result[1]), 1)
-    cond <- input$drop_result[2]
-    gend <- ifelse(as.numeric(input$drop_result[3]), "Male", "Female")
+    newy <- round(as.numeric(input$drop_result_aov[1]), 1)
+    cond <- input$drop_result_aov[2]
+    gend <- ifelse(as.numeric(input$drop_result_aov[3]), "Male", "Female")
     # outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
     # " condition to ", newy, ".")
     changed_dat[(dat$Condition == cond) & (dat$Gender == gend), "Mean"] <<- newy
