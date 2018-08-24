@@ -49,13 +49,18 @@ server <- function(input, output, session) {
   ancoef     <- c(1, -.5)
 
   set.seed(1321)
-  anco_dat_x_1     <- round(as.numeric(scale(rnorm(n_ancova/2))*.15 + .5), 2)
-  anco_dat_x_2     <- round(as.numeric(scale(rnorm(n_ancova/2))*.15 + .5), 2)
-  anco_dat_resid_1 <- round(as.numeric(scale(rnorm(n_ancova/2))*.35), 2)
-  anco_dat_resid_2 <- round(as.numeric(scale(rnorm(n_ancova/2))*.35), 2)
+  anco_dat_x_1     <- as.numeric(scale(rnorm(n_ancova/2)))
+  anco_dat_x_2     <- as.numeric(scale(rnorm(n_ancova/2)))
+  anco_dat_resid_1 <- as.numeric(scale(rnorm(n_ancova/2)))
+  anco_dat_resid_2 <- as.numeric(scale(rnorm(n_ancova/2)))
+
+  anco_dat_resid_1 <- resid(lm(y~x, data = data.frame(x = anco_dat_x_1,
+                                                      y = anco_dat_resid_1)))
+  anco_dat_resid_2 <- resid(lm(y~x, data = data.frame(x = anco_dat_x_2,
+                                                      y = anco_dat_resid_2)))
   anco_dat_g <- rep(0:1, each = n_ancova/2)
-  anco_dat_x <- c(anco_dat_x_1, anco_dat_x_2)
-  anco_dat_resid <- c(anco_dat_resid_1, anco_dat_resid_2)
+  anco_dat_x <- c(anco_dat_x_1, anco_dat_x_2) * .15 + .5
+  anco_dat_resid <- c(anco_dat_resid_1, anco_dat_resid_2) * .35
 
   anco_dat <- data.frame(g = anco_dat_g,
                          x = anco_dat_x,
@@ -64,6 +69,7 @@ server <- function(input, output, session) {
                            anco_dat_resid) # Residual
   changed_anco_dat <- anco_dat
 
+  summary(anco_dat)
 
   svar <- function(x) mean((x - mean(x))^2)
   compute_aov <- function(mus, n = 60) {
