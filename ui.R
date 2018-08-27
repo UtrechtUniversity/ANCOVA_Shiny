@@ -149,7 +149,7 @@ ui <- dashboardPage(
                          br(),
                          HTML('<div style="float:left;width:4px;height:4px;border: solid 8px #e6ffb3;"></div><div style="float:left"> &nbsp;Significant</div>'),
                          br(),
-                         HTML('<div style="float:left;width:4px;height:4px;border: solid 8px #ff9999;"></div><div style="float:left"> &nbsp;Insignificant</div>')
+                         HTML('<div style="float:left;width:4px;height:4px;border: solid 8px #ff9999;"></div><div style="float:left"> &nbsp;Not significant</div>')
 
                   )
               ),
@@ -185,7 +185,7 @@ ui <- dashboardPage(
                          br(),
                          HTML('<div style="float:left;width:4px;height:4px;border: solid 8px #e6ffb3;"></div><div style="float:left"> &nbsp;Significant</div>'),
                          br(),
-                         HTML('<div style="float:left;width:4px;height:4px;border: solid 8px #ff9999;"></div><div style="float:left"> &nbsp;Insignificant</div>')
+                         HTML('<div style="float:left;width:4px;height:4px;border: solid 8px #ff9999;"></div><div style="float:left"> &nbsp;Not significant</div>')
                   )
               )
               # box(width = 12, align = "center",
