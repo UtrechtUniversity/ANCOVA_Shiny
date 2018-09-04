@@ -69,7 +69,6 @@ server <- function(input, output, session) {
                            anco_dat_resid) # Residual
   changed_anco_dat <- anco_dat
 
-  summary(anco_dat)
 
   svar <- function(x) mean((x - mean(x))^2)
   compute_aov <- function(mus, n = 60) {
@@ -91,7 +90,7 @@ server <- function(input, output, session) {
   }
 
   compute_anco <- function(dat) {
-    coef_mat <- summary(lm(y ~ g + x, data = dat))$coefficients[-1,]
+    coef_mat <- summary(lm(y ~ I(g == 0) + x, data = dat))$coefficients[-1,]
     out <- cbind(c("Condition", "Covariate"),
                  sprintf("%.2f", coef_mat[, 1]),
                  sprintf("%.2f", coef_mat[, 3]),
@@ -100,7 +99,7 @@ server <- function(input, output, session) {
     out
   }
   compute_anco_int <- function(dat) {
-    coef_mat <- summary(lm(y ~ g * x, data = dat))$coefficients[-1,]
+    coef_mat <- summary(lm(y ~ I(g == 0) * x, data = dat))$coefficients[-1,]
     out <- cbind(c("Condition", "Covariate", "Condition:Covariate"),
                  sprintf("%.2f", coef_mat[, 1]),
                  sprintf("%.2f", coef_mat[, 3]),
@@ -172,7 +171,7 @@ server <- function(input, output, session) {
                ) %>%
       hc_xAxis(min = -.2, max = 1.2,
                title = list(text = "Covariate")) %>%
-      hc_subtitle(text = "") %>%
+      hc_subtitle(text = "Ancova with two groups (n = 60 for each group)") %>%
       hc_legend(labelFormatter = JS("function(e) {return this.name;}")) %>%
       hc_add_series(name = "Treatment", data = anco_endpt[1:2], type = "line",
                     draggableY = TRUE, color = blueish) %>%
