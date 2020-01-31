@@ -77,34 +77,40 @@ server <- function(input, output, session) {
     MSg <-  svar(c(sum(mus[1:2]),     sum(mus[3:4]))     / 2) * n
     MSc <-  svar(c(sum(mus[c(1, 3)]), sum(mus[c(2, 4)])) / 2) * n
     MSint <-  MSb - MSg - MSc
-
     p_vec <- pf(q = c(MSc, MSg, MSint), df1 = 1, df2 = n - 4, lower.tail = FALSE)
-
+    etasq_vec <- c(MSc, MSg, MSint)/sum(c(MSc, MSg, MSint))
     out <- cbind(c("Condition", "Gender", "Condition:Gender"),
                  sprintf("%.1f", c(MSc, MSg, MSint)),
                  1,
                  n - 4,
-                 sprintf("%.3f", p_vec, 3))
-    colnames(out) <- c(" ", "F-value", "df 1", "df 2", "p-value")
+                 sprintf("%.3f", p_vec, 3),
+                 sprintf("%.2f", etasq_vec))
+    colnames(out) <- c(" ", "F-value", "df 1", "df 2", "p-value", "EtaSq")
     out
   }
 
   compute_anco <- function(dat) {
-    coef_mat <- summary(lm(y ~ I(g == 0) + x, data = dat))$coefficients[-1,]
+    anco <- lm(y ~ I(g == 0) + x, data = dat)
+    etasq <- anova(anco)[,2]/sum(anova(anco)[,2])
+    coef_mat <- cbind(summary(anco)$coefficients[-1,], EtaSq = etasq[1:2])
     out <- cbind(c("Condition", "Covariate"),
                  sprintf("%.2f", coef_mat[, 1]),
                  sprintf("%.2f", coef_mat[, 3]),
-                 sprintf("%.3f", coef_mat[, 4]))
-    colnames(out) <- c(" ", "Coefficient", "t-value", "p-value")
+                 sprintf("%.3f", coef_mat[, 4]),
+                 sprintf("%.2f", coef_mat[, 5]))
+    colnames(out) <- c(" ", "Coefficient", "t-value", "p-value", "EtaSq")
     out
   }
   compute_anco_int <- function(dat) {
-    coef_mat <- summary(lm(y ~ I(g == 0) * x, data = dat))$coefficients[-1,]
+    anco <- lm(y ~ I(g == 0) * x, data = dat)
+    etasq <- anova(anco)[,2]/sum(anova(anco)[,2])
+    coef_mat <- cbind(summary(lm(y ~ I(g == 0) * x, data = dat))$coefficients[-1,], EtaSq = etasq[1:3])
     out <- cbind(c("Condition", "Covariate", "Condition:Covariate"),
                  sprintf("%.2f", coef_mat[, 1]),
                  sprintf("%.2f", coef_mat[, 3]),
-                 sprintf("%.3f", coef_mat[, 4]))
-    colnames(out) <- c(" ", "Coefficient", "t-value", "p-value")
+                 sprintf("%.3f", coef_mat[, 4]),
+                 sprintf("%.2f", coef_mat[, 5]))
+    colnames(out) <- c(" ", "Coefficient", "t-value", "p-value", "EtaSq")
     print(coef_mat)
     out
   }
