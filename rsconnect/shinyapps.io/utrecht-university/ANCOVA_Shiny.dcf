@@ -1,0 +1,12 @@
+name: ANCOVA_Shiny
+title: ANCOVA_Shiny
+username:
+account: utrecht-university
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1741480
+bundleId: 2766875
+url: https://utrecht-university.shinyapps.io/ANCOVA_Shiny/
+when: 1580489831.04825
+asMultiple: FALSE
+asStatic: FALSE

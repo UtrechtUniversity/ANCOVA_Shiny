@@ -123,6 +123,7 @@ server <- function(input, output, session) {
                       Shiny.onInputChange('drop_result_aov', [this.y, this.series.name, this.x]);}")
 
     highchart() %>%
+      hc_add_dependency("plugins/draggable-points.js") %>%
       hc_chart(animation = FALSE) %>%
       hc_add_theme(hc_theme_google()) %>%
       hc_title(text = "Drag-around ANOVA") %>%
@@ -168,6 +169,7 @@ server <- function(input, output, session) {
     is_control <- as.logical(changed_anco_dat[, 1])
 
     highchart() %>%
+      hc_add_dependency("plugins/draggable-points.js") %>%
       hc_chart(animation = FALSE, type = "line") %>%
       hc_add_theme(hc_theme_google()) %>%
       hc_title(text = "Drag-around ANCOVA") %>%
@@ -234,8 +236,6 @@ server <- function(input, output, session) {
     newy <- round(as.numeric(input$drop_result_aov[1]), 1)
     cond <- input$drop_result_aov[2]
     gend <- ifelse(as.numeric(input$drop_result_aov[3]), "Male", "Female")
-    # outputText <<- paste0("Hey! You've just moved the mean of ", tolower(gend), "s from the ", tolower(cond),
-                         # " condition to ", newy, ".")
     changed_aov_dat[(aov_dat$Condition == cond) & (aov_dat$Gender == gend), "Mean"] <<- newy
 
     anova_tab <<- compute_aov(changed_aov_dat[, 3], n = input$n_anova)
