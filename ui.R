@@ -137,7 +137,6 @@ ui <- dashboardPage(
               box(width = 12, align = "center",
                   column(width = 6,
                          h4("Data"),
-                         checkboxInput("showCondition", "Show main effect of condition"),
                          textOutput("text", container = h5),
                          tableOutput("aov_dattab")
                   ),

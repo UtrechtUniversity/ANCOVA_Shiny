@@ -114,11 +114,7 @@ server <- function(input, output, session) {
   output$anova_plot <- highcharter::renderHighchart({
 
     dropFunction <- JS("function(event){
-                      Shiny.onInputChange('drop_result_aov', [this.y, this.series.name, this.x]);
-                       chart.series[0].data[0].update(y += 10);}")
-
-    condMainDat <- rbind(Control   = rep(mean(aov_dat[aov_dat$Condition == "Control", "Mean"]), 2),
-                         Treatment = rep(mean(aov_dat[aov_dat$Condition == "Treatment", "Mean"]), 2))
+                      Shiny.onInputChange('drop_result_aov', [this.y, this.series.name, this.x]);}")
 
     highchart() %>%
       hc_chart(animation = FALSE) %>%
@@ -132,10 +128,6 @@ server <- function(input, output, session) {
                     draggableY = TRUE, color = blueish) %>%
       hc_add_series(name = "Control", data = aov_dat[aov_dat$Condition == "Control", "Mean"],
                     draggableY = TRUE, color = reddish) %>%
-      hc_add_series(name = "Main Effect Condition", data = condMainDat["Treatment", ],
-                    draggableY = FALSE, color = blueish) %>%
-      hc_add_series(name = "Main Effect Condition", data = condMainDat["Control", ],
-                    draggableY = FALSE, color = reddish) %>%
       hc_legend(labelFormatter = JS("function(e) {return this.name;}")) %>%
       hc_plotOptions(
         series = list(
@@ -155,18 +147,6 @@ server <- function(input, output, session) {
           cursor = "ns-resize"
         )
       ) -> h1
-
-    # if (input$showCondition) {
-    #
-    #   condMainDat <- cbind(Control   = c(1.5, mean(aov_dat[aov_dat$Condition == "Control", "Mean"])),
-    #                        Treatment = c(1.5, mean(aov_dat[aov_dat$Condition == "Treatment", "Mean"])))
-    #
-    #   print(condMainDat)
-    #
-    #   h1 %>% hc_add_series(name = "Main Effect Condition",
-    #                        data = condMainDat,
-    #                        draggableY = FALSE, color = reddish) -> h1
-    # }
 
 
     return(h1)
@@ -282,7 +262,6 @@ server <- function(input, output, session) {
                                     y = anco_endpt[1 + 2 * anco_dat_g] + # Intercept
                                       ancoef[1 + anco_dat_g] * anco_dat_x + # Regression
                                       anco_dat_resid) # Residual
-
 
     ancova_tab <<- compute_anco(changed_anco_dat)
     ancova_int_tab <<- compute_anco_int(changed_anco_dat)
